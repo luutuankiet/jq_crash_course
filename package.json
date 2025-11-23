@@ -6,17 +6,28 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "tsx services/testRunner.ts"
   },
   "dependencies": {
+    "@tailwindcss/typography": "^0.5.19",
+    "d3": "^7.9.0",
+    "diff": "^8.0.2",
+    "lodash": "^4.17.21",
+    "prismjs": "^1.30.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "recharts": "^3.4.1",
-    "d3": "^7.9.0"
+    "react-markdown": "^10.1.0",
+    "react-simple-code-editor": "^0.14.1",
+    "recharts": "^3.4.1"
   },
   "devDependencies": {
+    "@types/diff": "^7.0.2",
+    "@types/lodash": "^4.17.21",
     "@types/node": "^22.14.0",
+    "@types/prismjs": "^1.26.5",
     "@vitejs/plugin-react": "^5.0.0",
+    "tsx": "^4.20.6",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
   }

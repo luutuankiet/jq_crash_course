@@ -1,29 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import { AppView, Recipe } from './types';
-import { GLOSSARY, SAMPLE_JSON } from './constants';
+import { SAMPLE_JSON } from './constants';
 import { RECIPES } from './recipes';
 import { executeJq, fetchJsonFromUrl, readFileContent, checkJqAvailable } from './services/jqService';
+import { HomeView } from './components/HomeView';
+import { useRecipeProgress } from './hooks/useRecipeProgress';
+import isEqual from 'lodash/isEqual';
+import * as Diff from 'diff';
+
+// Syntax Highlighting
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-javascript';
+import 'prismjs/components/prism-json';
+import 'prismjs/themes/prism.css';
 
 // --- Icons ---
-const BookIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>;
-const GlossaryIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
+const BookIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>;
 const CodeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>;
 const RecipeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>;
-const PlayIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
-const UploadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>;
-const GlobeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
-const TextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></svg>;
-const InfoIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+const PlayIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3" /></svg>;
+const UploadIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>;
+const GlobeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="2" y1="12" x2="22" y2="12" /><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" /></svg>;
+const TextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 6.1H3" /><path d="M21 12.1H3" /><path d="M15.1 18H3" /></svg>;
+const InfoIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="16" x2="12" y2="12" /><line x1="12" y1="8" x2="12.01" y2="8" /></svg>;
 const ChevronDown = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>;
 const ChevronUp = () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>;
+const SidebarLeftIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>;
+const HomeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>;
+const SearchIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
+const WrapIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15l4 4 4-4" /><path d="M4 9l4-4 4 4" /><path d="M20 19H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12" /></svg>;
+const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>;
 
 // --- Components ---
 
 const ManualView = () => {
   return (
     <div className="h-full w-full bg-white">
-      <iframe 
-        src="https://jqlang.org/manual/" 
+      <iframe
+        src="https://jqlang.org/manual/"
         title="jq Manual"
         className="w-full h-full border-0"
       />
@@ -31,42 +47,23 @@ const ManualView = () => {
   );
 };
 
-const GlossaryView = () => {
-  const [filter, setFilter] = useState("");
-  const terms = GLOSSARY.filter(t => t.term.toLowerCase().includes(filter.toLowerCase()) || t.definition.toLowerCase().includes(filter.toLowerCase()));
-
-  return (
-    <div className="p-6 h-full overflow-y-auto bg-gray-50">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6">Glossary</h2>
-        <input 
-          type="text" 
-          placeholder="Search terms..." 
-          className="w-full bg-white border border-gray-300 text-gray-800 p-4 rounded-lg mb-8 focus:ring-2 focus:ring-jq-blue focus:outline-none shadow-sm"
-          value={filter}
-          onChange={e => setFilter(e.target.value)}
-        />
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {terms.map((term, i) => (
-            <div key={i} className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm hover:border-jq-light transition-all group">
-              <h3 className="text-xl font-mono font-bold text-jq-blue mb-2">{term.term}</h3>
-              <p className="text-gray-600 leading-relaxed">{term.definition}</p>
-            </div>
-          ))}
-          {terms.length === 0 && <p className="text-gray-500 text-center col-span-2">No terms found.</p>}
-        </div>
-      </div>
-    </div>
-  );
-};
-
 interface PlaygroundProps {
   initialJson?: string;
   initialQuery?: string;
+  challengeMode?: boolean;
+  expectedResult?: any;
+  onToggleChallenge?: () => void;
+  onChallengeComplete?: () => void;
 }
 
-const PlaygroundView: React.FC<PlaygroundProps> = ({ initialJson, initialQuery }) => {
+const PlaygroundView: React.FC<PlaygroundProps> = ({
+  initialJson,
+  initialQuery,
+  challengeMode,
+  expectedResult,
+  onToggleChallenge,
+  onChallengeComplete
+}) => {
   const [inputMode, setInputMode] = useState<'text' | 'url' | 'file'>('text');
   const [jsonInput, setJsonInput] = useState(initialJson || JSON.stringify(SAMPLE_JSON, null, 2));
   const [query, setQuery] = useState(initialQuery || ".");
@@ -75,42 +72,80 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({ initialJson, initialQuery }
   const [urlInput, setUrlInput] = useState("https://api.github.com/repos/jqlang/jq/commits?per_page=5");
   const [errorMsg, setErrorMsg] = useState("");
   const [isJqReady, setIsJqReady] = useState(false);
+  const [wrapInput, setWrapInput] = useState(false);
+  const [wrapOutput, setWrapOutput] = useState(false);
+  const [challengeStatus, setChallengeStatus] = useState<'idle' | 'pass' | 'fail'>('idle');
+  const [diffParts, setDiffParts] = useState<Diff.Change[] | null>(null);
 
   // Check for library availability periodically
   useEffect(() => {
-    // Immediate check
     if (checkJqAvailable()) {
       setIsJqReady(true);
       return;
     }
-
-    // Polling check
     const interval = setInterval(() => {
       if (checkJqAvailable()) {
         setIsJqReady(true);
         clearInterval(interval);
       }
     }, 500);
-
     return () => clearInterval(interval);
   }, []);
 
-  // Update internal state if props change (loading from recipe/tutorial)
+  // Update internal state if props change
   useEffect(() => {
     if (initialJson !== undefined) setJsonInput(initialJson);
     if (initialQuery !== undefined) setQuery(initialQuery);
+    setChallengeStatus('idle');
+    setOutput("");
+    setDiffParts(null);
   }, [initialJson, initialQuery]);
 
   const handleRun = async () => {
     setLoading(true);
     setErrorMsg("");
-    const result = await executeJq(jsonInput, query);
-    setOutput(result);
-    setLoading(false);
+    setChallengeStatus('idle');
+    setDiffParts(null);
+
+    try {
+      const result = await executeJq(jsonInput, query);
+      setOutput(result);
+
+      if (challengeMode && expectedResult !== undefined) {
+        let isCorrect = false;
+        try {
+          const parsedResult = JSON.parse(result);
+          if (isEqual(parsedResult, expectedResult)) {
+            isCorrect = true;
+          }
+        } catch (e) {
+          if (result.trim() === JSON.stringify(expectedResult)) {
+            isCorrect = true;
+          }
+        }
+
+        if (isCorrect) {
+          setChallengeStatus('pass');
+          onChallengeComplete?.();
+        } else {
+          setChallengeStatus('fail');
+          // Compute Diff
+          const expectedStr = JSON.stringify(expectedResult, null, 2);
+          const diff = Diff.diffLines(expectedStr, result);
+          setDiffParts(diff);
+        }
+      }
+    } catch (err: any) {
+      setOutput("");
+      setErrorMsg(err.message || "Error executing jq");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
       if (isJqReady && !loading) {
         handleRun();
       }
@@ -123,7 +158,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({ initialJson, initialQuery }
     try {
       const data = await fetchJsonFromUrl(urlInput);
       setJsonInput(data);
-      setInputMode('text'); // Switch back to text view to show the result
+      setInputMode('text');
     } catch (err: any) {
       setErrorMsg(err.message);
     } finally {
@@ -148,195 +183,386 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({ initialJson, initialQuery }
   };
 
   return (
-    <div className="flex flex-col h-full p-4 gap-4 bg-gray-50">
+    <div className="flex flex-col h-full p-4 gap-4 bg-gray-50" onKeyDown={handleKeyDown}>
       <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
         <div className="flex items-center gap-4">
-           <h2 className="text-xl font-bold text-gray-800 hidden md:block">Playground</h2>
-           <div className="flex bg-gray-100 rounded p-1 border border-gray-200">
-             <button 
-               onClick={() => setInputMode('text')} 
-               className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'text' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}
-             >
-               <TextIcon /> Text
-             </button>
-             <button 
-               onClick={() => setInputMode('url')} 
-               className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'url' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}
-             >
-               <GlobeIcon /> URL
-             </button>
-             <button 
-               onClick={() => setInputMode('file')} 
-               className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'file' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}
-             >
-               <UploadIcon /> File
-             </button>
-           </div>
+          <h2 className="text-xl font-bold text-gray-800 hidden md:block">Playground</h2>
+          <div className="flex bg-gray-100 rounded p-1 border border-gray-200">
+            <button onClick={() => setInputMode('text')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'text' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><TextIcon /> Text</button>
+            <button onClick={() => setInputMode('url')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'url' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><GlobeIcon /> URL</button>
+            <button onClick={() => setInputMode('file')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'file' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><UploadIcon /> File</button>
+          </div>
+          <span className="text-[10px] text-gray-400 hidden lg:inline">💡 Load JSON from URL or File!</span>
         </div>
         <div className="flex items-center gap-4">
-           {!isJqReady && <span className="text-xs text-amber-600 animate-pulse font-medium">Loading jq engine...</span>}
-           <span className="text-xs text-gray-500 hidden md:inline">Ctrl + Enter to run</span>
-           <button 
-             onClick={handleRun}
-             disabled={loading || !isJqReady}
-             className={`font-bold py-2 px-4 rounded flex items-center gap-2 shadow-sm ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'}`}
-           >
-             {loading ? 'Processing...' : <><PlayIcon /> Run</>}
-           </button>
+          {!isJqReady && <span className="text-xs text-amber-600 animate-pulse font-medium">Loading jq engine...</span>}
+          <span className="text-xs text-gray-500 hidden md:inline">Cmd/Ctrl + Enter to run</span>
+
+          {onToggleChallenge && (
+            <div className="flex items-center gap-2 mr-2" title="Hide answers and test your skills!">
+              <label className="text-xs font-bold text-gray-500 cursor-pointer" onClick={onToggleChallenge}>Challenge Mode</label>
+              <div
+                className={`w-10 h-5 rounded-full p-1 cursor-pointer transition-colors ${challengeMode ? 'bg-jq-blue' : 'bg-gray-300'}`}
+                onClick={onToggleChallenge}
+              >
+                <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${challengeMode ? 'translate-x-5' : 'translate-x-0'}`} />
+              </div>
+            </div>
+          )}
+
+          <button
+            onClick={handleRun}
+            disabled={loading || !isJqReady}
+            className={`font-bold py-2 px-4 rounded flex items-center gap-2 shadow-sm ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'}`}
+          >
+            {loading ? 'Processing...' : <><PlayIcon /> {challengeMode ? 'Check Answer' : 'Run'}</>}
+          </button>
         </div>
       </div>
 
+      {challengeMode && (
+        <>
+          <div className={`p-3 rounded-lg border text-sm font-bold text-center transition-colors ${challengeStatus === 'pass' ? 'bg-green-100 border-green-300 text-green-800' :
+            challengeStatus === 'fail' ? 'bg-red-100 border-red-300 text-red-800' :
+              'bg-blue-50 border-blue-200 text-blue-800'
+            }`}>
+            {challengeStatus === 'pass' && "🎉 Correct! Well done."}
+            {challengeStatus === 'fail' && "❌ Not quite. Check the diff below."}
+            {challengeStatus === 'idle' && "💪 Try to solve the challenge yourself!"}
+          </div>
+          {expectedResult !== undefined && (
+            <details className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+              <summary className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm font-bold text-gray-600 flex items-center gap-2">
+                <span>🎯</span> Expected Result <span className="text-xs text-gray-400">(click to reveal)</span>
+              </summary>
+              <pre className="px-4 py-3 text-xs font-mono text-gray-700 overflow-x-auto bg-white border-t border-gray-200">
+                {JSON.stringify(expectedResult, null, 2)}
+              </pre>
+            </details>
+          )}
+        </>
+      )}
+
       <div className="flex gap-4 items-center">
-         <span className="font-mono text-jq-blue font-bold text-lg">jq</span>
-         <input 
-           type="text" 
-           value={query}
-           onChange={(e) => setQuery(e.target.value)}
-           onKeyDown={handleKeyDown}
-           className="flex-1 bg-white border border-gray-300 text-gray-900 font-mono p-3 rounded focus:border-jq-blue focus:ring-1 focus:ring-jq-blue focus:outline-none text-lg shadow-sm"
-           placeholder=". | select(.id == 1)"
-         />
+        <span className="font-mono text-jq-blue font-bold text-lg">jq</span>
+        <div className={`flex-1 border border-gray-300 rounded focus-within:border-jq-blue focus-within:ring-1 focus-within:ring-jq-blue shadow-sm bg-white overflow-hidden query-editor`}>
+          <Editor
+            value={query}
+            onValueChange={code => setQuery(code)}
+            highlight={code => highlight(code, languages.js, 'javascript')}
+            padding={12}
+            placeholder="Type your jq query here... (multi-line supported)"
+            className="font-mono text-sm"
+            style={{
+              fontFamily: '"Fira Code", "Fira Mono", monospace',
+              fontSize: 14,
+              backgroundColor: '#ffffff',
+              minHeight: '80px',
+            }}
+            textareaClassName="focus:outline-none"
+          />
+        </div>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
         <div className="flex-1 flex flex-col min-h-0 relative">
-          <label className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Input JSON</label>
-          
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Input JSON</label>
+            {inputMode === 'text' && (
+              <button onClick={() => setWrapInput(!wrapInput)} className={`text-xs flex items-center gap-1 ${wrapInput ? 'text-jq-blue font-bold' : 'text-gray-400'}`} title="Toggle Word Wrap">
+                <WrapIcon /> Wrap
+              </button>
+            )}
+          </div>
+
           {inputMode === 'text' && (
-            <textarea 
-              value={jsonInput}
-              onChange={(e) => setJsonInput(e.target.value)}
-              className="flex-1 bg-white border border-gray-300 text-gray-800 font-mono text-sm p-4 rounded resize-none focus:border-jq-light focus:outline-none leading-relaxed shadow-sm"
-              spellCheck={false}
-              placeholder='{"key": "value"}'
-            />
+            <div className="flex-1 border border-gray-300 rounded overflow-auto shadow-sm bg-white relative">
+              <div className={wrapInput ? 'wrap-enabled h-full' : 'wrap-disabled h-full'}>
+                <Editor
+                  value={jsonInput}
+                  onValueChange={code => setJsonInput(code)}
+                  highlight={code => highlight(code, languages.json, 'json')}
+                  padding={16}
+                  className="font-mono text-sm h-full"
+                  style={{
+                    fontFamily: '"Fira Code", "Fira Mono", monospace',
+                    fontSize: 14,
+                    backgroundColor: '#ffffff',
+                    height: '100%'
+                  }}
+                  textareaClassName="h-full"
+                />
+              </div>
+            </div>
           )}
 
           {inputMode === 'url' && (
-             <div className="flex-1 bg-white border border-gray-300 p-8 rounded flex flex-col items-center justify-center gap-4 shadow-sm">
-               <h3 className="text-lg font-bold text-gray-800">Fetch JSON from URL</h3>
-               <div className="flex w-full max-w-lg gap-2">
-                 <input 
-                    type="text" 
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    className="flex-1 bg-gray-50 border border-gray-300 p-2 rounded text-gray-800 focus:outline-none focus:border-jq-blue" 
-                 />
-                 <button onClick={handleFetchUrl} disabled={loading} className="bg-jq-blue hover:bg-jq-light px-4 rounded text-white font-bold">Fetch</button>
-               </div>
-               <p className="text-xs text-gray-500">Note: CORS must be enabled on the target server.</p>
-               {errorMsg && <p className="text-red-500 text-sm font-bold">{errorMsg}</p>}
-             </div>
+            <div className="flex-1 bg-white border border-gray-300 p-8 rounded flex flex-col items-center justify-center gap-4 shadow-sm">
+              <h3 className="text-lg font-bold text-gray-800">Fetch JSON from URL</h3>
+              <div className="flex w-full max-w-lg gap-2">
+                <input type="text" value={urlInput} onChange={(e) => setUrlInput(e.target.value)} className="flex-1 bg-gray-50 border border-gray-300 p-2 rounded text-gray-800 focus:outline-none focus:border-jq-blue" />
+                <button onClick={handleFetchUrl} disabled={loading} className="bg-jq-blue hover:bg-jq-light px-4 rounded text-white font-bold">Fetch</button>
+              </div>
+              <p className="text-xs text-gray-500">Note: CORS must be enabled on the target server.</p>
+              {errorMsg && <p className="text-red-500 text-sm font-bold">{errorMsg}</p>}
+            </div>
           )}
 
           {inputMode === 'file' && (
-             <div className="flex-1 bg-white border border-gray-300 p-8 rounded flex flex-col items-center justify-center gap-4 border-dashed shadow-sm">
-               <div className="text-gray-400">
-                 <UploadIcon />
-               </div>
-               <h3 className="text-lg font-bold text-gray-800">Upload JSON File</h3>
-               <input type="file" accept=".json" onChange={handleFileUpload} className="text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-jq-blue file:text-white hover:file:bg-jq-light" />
-               {errorMsg && <p className="text-red-500 text-sm font-bold">{errorMsg}</p>}
-             </div>
+            <div className="flex-1 bg-white border border-gray-300 p-8 rounded flex flex-col items-center justify-center gap-4 border-dashed shadow-sm">
+              <div className="text-gray-400"><UploadIcon /></div>
+              <h3 className="text-lg font-bold text-gray-800">Upload JSON File</h3>
+              <input type="file" accept=".json" onChange={handleFileUpload} className="text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-jq-blue file:text-white hover:file:bg-jq-light" />
+              {errorMsg && <p className="text-red-500 text-sm font-bold">{errorMsg}</p>}
+            </div>
           )}
-
         </div>
+
         <div className="flex-1 flex flex-col min-h-0">
-          <label className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Output Result</label>
-          {/* Keeping output dark for terminal feel */}
-          <div className="flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto whitespace-pre-wrap shadow-sm">
+          <div className="flex justify-between items-center mb-2">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Output Result</label>
+            <button onClick={() => setWrapOutput(!wrapOutput)} className={`text-xs flex items-center gap-1 ${wrapOutput ? 'text-jq-blue font-bold' : 'text-gray-400'}`} title="Toggle Word Wrap">
+              <WrapIcon /> Wrap
+            </button>
+          </div>
+
+          <div className={`flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto shadow-sm ${wrapOutput ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>
             {output || (loading ? "Running jq..." : "// Output will appear here")}
           </div>
+
+          {challengeMode && diffParts && (
+            <div className="mt-4 flex-1 flex flex-col min-h-0">
+              <label className="text-xs font-bold text-red-500 mb-2 uppercase tracking-wide">Diff (Expected vs Actual)</label>
+              <div className="flex-1 bg-gray-50 border border-red-200 text-gray-800 font-mono text-xs p-4 rounded overflow-auto whitespace-pre shadow-sm">
+                {diffParts.map((part, index) => {
+                  const color = part.added ? 'bg-green-100 text-green-800' :
+                    part.removed ? 'bg-red-100 text-red-800' : 'text-gray-500';
+                  const prefix = part.added ? '+ ' : part.removed ? '- ' : '  ';
+                  return (
+                    <span key={index} className={`block ${color}`}>
+                      {part.value.split('\n').filter(l => l).map(l => prefix + l).join('\n')}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-// Component for a single recipe item
-const RecipeItem: React.FC<{ recipe: Recipe; onLoad: (r: Recipe) => void }> = ({ recipe, onLoad }) => {
+interface RecipeItemProps {
+  recipe: Recipe;
+  onLoad: (r: Recipe) => void;
+  challengeMode: boolean;
+  isSelected: boolean;
+  isCompleted: boolean;
+  onToggleComplete: (recipeId: string) => void;
+}
+
+const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, isSelected, isCompleted, onToggleComplete }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div 
-      className="bg-white border border-gray-200 rounded p-4 hover:border-jq-light hover:shadow-md transition-all group shadow-sm"
-    >
-        <div className="flex justify-between items-start mb-2 cursor-pointer" onClick={() => onLoad(recipe)}>
-          <div>
-            <span className="text-[10px] font-bold text-jq-blue uppercase tracking-wide">{recipe.category}</span>
-            <h3 className="text-sm font-bold text-gray-800 mt-1 group-hover:text-jq-blue">{recipe.title}</h3>
-          </div>
-          <button onClick={(e) => { e.stopPropagation(); onLoad(recipe); }} className="text-jq-blue hover:text-jq-dark opacity-0 group-hover:opacity-100 transition-opacity">
-            <PlayIcon />
-          </button>
+    <div className={`bg-white border border-gray-200 rounded p-4 hover:border-jq-light hover:shadow-md transition-all group shadow-sm ${isSelected ? 'recipe-card-selected' : ''} ${isCompleted ? 'recipe-card-completed' : ''}`}>
+      <div className="flex justify-between items-start mb-2 cursor-pointer" onClick={() => onLoad(recipe)}>
+        <div className="flex-1">
+          <span className="text-[10px] font-bold text-jq-blue uppercase tracking-wide">{recipe.category}</span>
+          <h3 className="text-sm font-bold text-gray-800 mt-1 group-hover:text-jq-blue">{recipe.title}</h3>
         </div>
-        
-        <p className="text-gray-600 text-xs mb-3 cursor-pointer" onClick={() => onLoad(recipe)}>{recipe.description}</p>
-        
+        <button onClick={(e) => { e.stopPropagation(); onLoad(recipe); }} className="text-jq-blue hover:text-jq-dark opacity-0 group-hover:opacity-100 transition-opacity">
+          <PlayIcon />
+        </button>
+      </div>
+
+      <p className="text-gray-600 text-xs mb-3 cursor-pointer" onClick={() => onLoad(recipe)}>{recipe.description}</p>
+
+      {!challengeMode && (
         <code className="block bg-gray-100 p-2 rounded text-jq-dark font-mono text-xs truncate border border-gray-200 mb-3 cursor-pointer" onClick={() => onLoad(recipe)}>
           {recipe.query}
         </code>
+      )}
 
-        <div className="border-t border-gray-100 pt-2">
-          <button 
-            onClick={() => setExpanded(!expanded)}
-            className="flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-jq-blue w-full"
+      <div className="border-t border-gray-100 pt-2 flex items-center justify-between gap-2">
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="flex items-center gap-1 text-xs font-bold text-gray-500 hover:text-jq-blue flex-1"
+        >
+          <InfoIcon /> {expanded ? "Hide Explanation" : "Deep Dive"} {expanded ? <ChevronUp /> : <ChevronDown />}
+        </button>
+
+        {isSelected && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleComplete(recipe.id); }}
+            className={`text-xs flex items-center gap-1 px-2 py-1 rounded transition-colors ${isCompleted ? 'bg-green-100 text-green-700 font-bold' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+            title={isCompleted ? "Mark as incomplete" : "Mark as complete"}
           >
-             <InfoIcon /> {expanded ? "Hide Explanation" : "Deep Dive"} {expanded ? <ChevronUp /> : <ChevronDown />}
+            <CheckIcon /> {isCompleted ? 'Done' : 'Mark Done'}
           </button>
-          
-          {expanded && (
-             <div className="mt-2 text-xs text-gray-600 bg-blue-50 p-3 rounded border border-blue-100 leading-relaxed">
-               {recipe.narrative}
-             </div>
+        )}
+      </div>
+
+      {expanded && (
+        <div className="mt-2 space-y-2">
+          <div className="text-xs text-gray-600 bg-blue-50 p-3 rounded border border-blue-100 leading-relaxed">
+            {recipe.narrative}
+          </div>
+          {challengeMode && recipe.hint && (
+            <div className="text-xs text-amber-800 bg-amber-50 p-3 rounded border border-amber-100 leading-relaxed">
+              <strong>💡 Hint:</strong> {recipe.hint}
+            </div>
           )}
         </div>
+      )}
     </div>
   );
 };
 
 const RecipeAndPlaygroundView: React.FC = () => {
-  // Shared state between recipe list and playground
   const [json, setJson] = useState(JSON.stringify(SAMPLE_JSON, null, 2));
   const [query, setQuery] = useState(".");
+  const [challengeMode, setChallengeMode] = useState(false);
+  const [expectedResult, setExpectedResult] = useState<any>(undefined);
+  const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  const progress = useRecipeProgress();
 
-  const loadRecipe = (r: Recipe) => {
+  const loadRecipe = async (r: Recipe) => {
     setJson(r.input);
-    setQuery(r.query);
+    setSelectedRecipeId(r.id);
+    progress.markAsRead(r.id);
+
+    if (challengeMode) {
+      setQuery("."); // Reset query for challenge
+      // Calculate expected result
+      try {
+        const result = await executeJq(r.input, r.query);
+        setExpectedResult(JSON.parse(result));
+      } catch (e) {
+        console.error("Failed to calculate expected result", e);
+        setExpectedResult(undefined);
+      }
+    } else {
+      setQuery(r.query);
+      setExpectedResult(undefined);
+    }
+  };
+
+  const handleChallengeComplete = () => {
+    if (selectedRecipeId && !progress.isCompleted(selectedRecipeId)) {
+      progress.toggleCompleted(selectedRecipeId);
+    }
   };
 
   const [category, setCategory] = useState<string>("All");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [progressFilter, setProgressFilter] = useState<'all' | 'new' | 'done'>('all');
+
   const categories = ["All", ...Array.from(new Set(RECIPES.map(r => r.category)))];
-  const filteredRecipes = category === "All" ? RECIPES : RECIPES.filter(r => r.category === category);
+
+  const filteredRecipes = RECIPES.filter(r => {
+    const matchesCategory = category === "All" || r.category === category;
+    const matchesSearch = r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      r.query.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesProgress =
+      progressFilter === 'all' ? true :
+        progressFilter === 'new' ? !progress.isRead(r.id) :
+          progressFilter === 'done' ? progress.isCompleted(r.id) : true;
+    return matchesCategory && matchesSearch && matchesProgress;
+  });
+
+  const stats = progress.getStats();
 
   return (
     <div className="flex h-full bg-gray-50">
       {/* Left Pane: Recipes List */}
       <div className="w-1/3 min-w-[350px] border-r border-gray-200 bg-gray-50 flex flex-col">
-         <div className="p-4 border-b border-gray-200 bg-white">
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Recipe Book</h2>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin">
-              {categories.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
-                >
-                  {c}
-                </button>
-              ))}
+        <div className="p-4 border-b border-gray-200 bg-white space-y-3">
+          <div className="flex justify-between items-center">
+            <h2 className="text-xl font-bold text-gray-800">Recipe Book</h2>
+            {stats.completed > 0 && (
+              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">
+                {stats.completed} ✓
+              </span>
+            )}
+          </div>
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setProgressFilter('all')}
+              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'all' ? 'bg-jq-blue text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setProgressFilter('new')}
+              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'new' ? 'bg-purple-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              New
+            </button>
+            <button
+              onClick={() => setProgressFilter('done')}
+              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'done' ? 'bg-green-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+            >
+              Done
+            </button>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search recipes..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm focus:outline-none focus:border-jq-blue focus:ring-1 focus:ring-jq-blue"
+            />
+            <div className="absolute left-3 top-2.5 text-gray-400">
+              <SearchIcon />
             </div>
-         </div>
-         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
-            {filteredRecipes.map(recipe => (
-              <RecipeItem key={recipe.id} recipe={recipe} onLoad={loadRecipe} />
+          </div>
+
+          <div className="flex flex-wrap gap-2 pb-2">
+            {categories.map(c => (
+              <button
+                key={c}
+                onClick={() => setCategory(c)}
+                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
+              >
+                {c}
+              </button>
             ))}
-         </div>
+          </div>
+        </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {filteredRecipes.map(recipe => (
+            <RecipeItem
+              key={recipe.id}
+              recipe={recipe}
+              onLoad={loadRecipe}
+              challengeMode={challengeMode}
+              isSelected={recipe.id === selectedRecipeId}
+              isCompleted={progress.isCompleted(recipe.id)}
+              onToggleComplete={progress.toggleCompleted}
+            />
+          ))}
+          {filteredRecipes.length === 0 && (
+            <div className="text-center text-gray-400 py-8 text-sm">No recipes found matching your search.</div>
+          )}
+        </div>
       </div>
 
       {/* Right Pane: Playground */}
       <div className="flex-1 min-w-0">
-        <PlaygroundView initialJson={json} initialQuery={query} />
+        <PlaygroundView
+          initialJson={json}
+          initialQuery={query}
+          challengeMode={challengeMode}
+          expectedResult={expectedResult}
+          onToggleChallenge={() => setChallengeMode(!challengeMode)}
+          onChallengeComplete={handleChallengeComplete}
+        />
       </div>
     </div>
   );
@@ -345,61 +571,91 @@ const RecipeAndPlaygroundView: React.FC = () => {
 // --- Main App Shell ---
 
 const App: React.FC = () => {
-  const [view, setView] = useState<AppView>(AppView.PLAYGROUND);
+  const [view, setView] = useState<AppView>(AppView.HOME);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
+  // Auto-collapse sidebar on mobile/tablet
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarCollapsed(true);
+      }
+    };
+
+    handleResize(); // Check on mount
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const renderView = () => {
-    switch(view) {
+    switch (view) {
+      case AppView.HOME: return <HomeView onNavigate={setView} />;
       case AppView.MANUAL: return <ManualView />;
-      case AppView.GLOSSARY: return <GlossaryView />;
       case AppView.PLAYGROUND: return <PlaygroundView />;
       case AppView.RECIPES: return <RecipeAndPlaygroundView />;
-      default: return <PlaygroundView />;
+      default: return <HomeView onNavigate={setView} />;
     }
   };
 
   return (
     <div className="flex h-screen bg-gray-50 text-gray-800 font-sans">
       {/* Sidebar Navigation */}
-      <nav className="w-16 md:w-64 bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 transition-all z-10 shadow-sm">
+      <nav className={`${isSidebarCollapsed ? 'w-16' : 'w-16 md:w-64'} bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 transition-all duration-300 z-10 shadow-sm`}>
         <div>
-          <div className="p-4 md:p-6 flex items-center gap-3 border-b border-gray-100 justify-center md:justify-start">
-            <div className="w-8 h-8 bg-jq-blue rounded flex items-center justify-center font-bold text-white shrink-0 cursor-pointer shadow-sm" onClick={() => setView(AppView.PLAYGROUND)}>jq</div>
-            <span className="font-bold text-xl tracking-tight hidden md:block text-gray-800">Master</span>
+          <div className={`p-4 ${isSidebarCollapsed ? 'justify-center' : 'md:p-6 justify-center md:justify-start'} flex items-center gap-3 border-b border-gray-100`}>
+            <div className="w-8 h-8 bg-jq-blue rounded flex items-center justify-center font-bold text-white shrink-0 cursor-pointer shadow-sm" onClick={() => setView(AppView.HOME)}>jq</div>
+            {!isSidebarCollapsed && <span className="font-bold text-xl tracking-tight hidden md:block text-gray-800">Master</span>}
           </div>
 
           <div className="p-2 md:p-4 space-y-1 md:space-y-2">
-            <NavButton 
-              active={view === AppView.PLAYGROUND} 
-              onClick={() => setView(AppView.PLAYGROUND)} 
-              icon={<CodeIcon />} 
-              label="Playground" 
+            <NavButton
+              active={view === AppView.HOME}
+              onClick={() => setView(AppView.HOME)}
+              icon={<HomeIcon />}
+              label="Home"
+              collapsed={isSidebarCollapsed}
             />
-             <NavButton 
-              active={view === AppView.RECIPES} 
-              onClick={() => setView(AppView.RECIPES)} 
-              icon={<RecipeIcon />} 
-              label="Recipes" 
+            <NavButton
+              active={view === AppView.PLAYGROUND}
+              onClick={() => setView(AppView.PLAYGROUND)}
+              icon={<CodeIcon />}
+              label="Playground"
+              collapsed={isSidebarCollapsed}
+            />
+            <NavButton
+              active={view === AppView.RECIPES}
+              onClick={() => setView(AppView.RECIPES)}
+              icon={<RecipeIcon />}
+              label="Recipes"
+              collapsed={isSidebarCollapsed}
             />
             <div className="border-t border-gray-100 my-2 mx-2"></div>
-            <NavButton 
-              active={view === AppView.MANUAL} 
-              onClick={() => setView(AppView.MANUAL)} 
-              icon={<BookIcon />} 
-              label="Manual" 
-            />
-            <NavButton 
-              active={view === AppView.GLOSSARY} 
-              onClick={() => setView(AppView.GLOSSARY)} 
-              icon={<GlossaryIcon />} 
-              label="Glossary" 
+            <NavButton
+              active={view === AppView.MANUAL}
+              onClick={() => setView(AppView.MANUAL)}
+              icon={<BookIcon />}
+              label="Manual"
+              collapsed={isSidebarCollapsed}
             />
           </div>
         </div>
-        
-        <div className="p-4 text-xs text-gray-400 hidden md:block text-center border-t border-gray-100">
-          jq 1.8 Study App
-          <br/>
-          <span className="opacity-75">Client-side processing</span>
+
+        <div className="flex flex-col gap-2">
+          <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="mx-auto p-2 text-gray-400 hover:text-jq-blue transition-colors hidden md:block"
+            title={isSidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            <SidebarLeftIcon />
+          </button>
+
+          {!isSidebarCollapsed && (
+            <div className="p-4 text-xs text-gray-400 hidden md:block text-center border-t border-gray-100">
+              jq 1.8 Study App
+              <br />
+              <span className="opacity-75">Client-side processing</span>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -411,19 +667,22 @@ const App: React.FC = () => {
   );
 };
 
-const NavButton = ({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
-  <button 
+const NavButton = ({ active, onClick, icon, label, collapsed }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string, collapsed?: boolean }) => (
+  <button
     onClick={onClick}
-    className={`w-full flex items-center justify-center md:justify-start gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative ${
-      active 
-        ? 'bg-jq-blue text-white shadow-md shadow-blue-500/20' 
-        : 'text-gray-500 hover:bg-gray-100 hover:text-jq-blue'
-    }`}
+    className={`w-full flex items-center justify-center ${collapsed ? '' : 'md:justify-start'} gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative ${active
+      ? 'bg-jq-blue text-white shadow-md shadow-blue-500/20'
+      : 'text-gray-500 hover:bg-gray-100 hover:text-jq-blue'
+      }`}
     title={label}
   >
     <span className={`${active ? 'text-white' : 'text-gray-400 group-hover:text-jq-blue'}`}>{icon}</span>
-    <span className="font-medium hidden md:block">{label}</span>
+    {!collapsed && <span className="font-medium hidden md:block">{label}</span>}
   </button>
 );
+
+// Expose test runner
+import { runRecipeTests } from './services/testRunner';
+(window as any).runRecipeTests = runRecipeTests;
 
 export default App;

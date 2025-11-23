@@ -7,7 +7,7 @@ export const GLOSSARY: GlossaryTerm[] = [
   { term: "Identity Operator (.)", definition: "The simplest filter. Takes input and produces it unchanged. Commonly used for pretty-printing." },
   { term: "Pipe Operator (|)", definition: "Chains filters together, feeding the output of the left filter into the input of the right filter." },
   { term: "Immutability", definition: "jq treats values as immutable. Assignment works as though a full deep copy is performed." },
-  
+
   // Module 1: Navigation
   { term: "Property Access (.key)", definition: "Extracts the value associated with a simple identifier-like key." },
   { term: "Complex Key Access ([\"key\"])", definition: "Required when keys contain special characters or spaces (e.g. .[\"key-name\"])." },
@@ -75,3 +75,127 @@ export const SAMPLE_JSON = {
   },
   "expensive": 10
 };
+
+// --- 1. Docker Inspect Output (Infrastructure) ---
+export const DOCKER_INSPECT_JSON = [
+  {
+    "Id": "a1b2c3d4e5",
+    "Name": "/web-production",
+    "State": {
+      "Status": "running",
+      "Running": true,
+      "ExitCode": 0,
+      "Health": { "Status": "healthy", "FailingStreak": 0 }
+    },
+    "Config": {
+      "Image": "nginx:alpine",
+      "Env": ["HOST=0.0.0.0", "PORT=80", "API_KEY=secret_123"],
+      "Labels": { "com.docker.compose.service": "web", "org.opencontainers.image.version": "1.21" }
+    },
+    "NetworkSettings": {
+      "Networks": {
+        "app_net": { "IPAddress": "172.18.0.3", "Gateway": "172.18.0.1", "Aliases": ["web", "a1b2c3"] }
+      }
+    },
+    "Mounts": [
+      { "Type": "bind", "Source": "/host/nginx.conf", "Destination": "/etc/nginx/nginx.conf", "RW": true },
+      { "Type": "volume", "Name": "logs_vol", "Source": "/var/lib/docker/volumes/logs/_data", "Destination": "/var/log/nginx", "RW": true }
+    ]
+  }
+];
+
+// --- 2. Looker Dashboard Element (BI/Analytics) ---
+export const LOOKER_DASHBOARD_JSON = {
+  "id": "123",
+  "title": "Sales Overview",
+  "dashboard_elements": [
+    {
+      "id": "456",
+      "type": "vis",
+      "title": "Monthly Revenue",
+      "query": {
+        "view": "orders",
+        "fields": ["orders.created_month", "orders.total_amount"],
+        "filters": { "orders.status": "complete" },
+        "vis_config": {
+          "type": "looker_line",
+          "y_axis_gridlines": true,
+          "series_labels": { "orders.total_amount": "Revenue" }
+        }
+      }
+    },
+    {
+      "id": "789",
+      "type": "vis",
+      "title": "Top Customers",
+      "query": {
+        "view": "users",
+        "fields": ["users.name", "orders.count"],
+        "vis_config": { "type": "looker_grid", "show_view_names": false }
+      }
+    }
+  ]
+};
+
+// --- 3. GenAI/OpenTelemetry Trace Log (AI Ops) ---
+export const GENAI_TRACE_JSON = {
+  "trace_id": "0af765",
+  "spans": [
+    {
+      "name": "chat_completion",
+      "kind": "CLIENT",
+      "start_time_unix_nano": 1610000000000000,
+      "end_time_unix_nano": 1610000002000000,
+      "attributes": {
+        "llm.system": "openai",
+        "llm.request.model": "gpt-4",
+        "llm.usage.prompt_tokens": 150,
+        "llm.usage.completion_tokens": 40,
+        "llm.usage.total_tokens": 190,
+        "gen_ai.prompt.0.content": "Summarize this JSON data...",
+        "gen_ai.completion.0.content": "Here is the summary..."
+      },
+      "status": { "code": "OK" }
+    },
+    {
+      "name": "tool_execution",
+      "kind": "INTERNAL",
+      "attributes": { "tool.name": "calculator", "tool.args": "{\"x\": 5, \"y\": 10}" }
+    }
+  ]
+};
+
+// --- 4. SaaS Ingestion (Stripe-like Invoice) ---
+export const STRIPE_INVOICE_JSON = {
+  "object": "list",
+  "data": [
+    {
+      "id": "in_123",
+      "object": "invoice",
+      "amount_due": 2500,
+      "currency": "usd",
+      "status": "paid",
+      "lines": {
+        "object": "list",
+        "data": [
+          { "id": "il_1", "amount": 2000, "description": "Pro Plan", "metadata": { "region": "eu" } },
+          { "id": "il_2", "amount": 500, "description": "Seat Add-on", "metadata": { "region": "eu" } }
+        ]
+      }
+    }
+  ]
+};
+
+// --- 5. BigQuery Native JSON (Data Engineering) ---
+export const BQ_JSON_EXPORT = [
+  {
+    "row_id": 1,
+    "user_info": { "id": 99, "geo": { "city": "London", "coords": [51.5, -0.12] } },
+    "custom_attributes": "[{\"key\":\"tier\", \"value\":\"gold\"}, {\"key\":\"source\", \"value\":\"web\"}]" // JSON string inside JSON
+  },
+  {
+    "row_id": 2,
+    "user_info": { "id": 100, "geo": { "city": "New York", "coords": [40.7, -74.0] } },
+    "custom_attributes": "[{\"key\":\"tier\", \"value\":\"silver\"}]"
+  }
+];

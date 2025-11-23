@@ -4,8 +4,8 @@ export interface GlossaryTerm {
 }
 
 export enum AppView {
+  HOME = 'HOME',
   MANUAL = 'MANUAL',
-  GLOSSARY = 'GLOSSARY',
   PLAYGROUND = 'PLAYGROUND',
   RECIPES = 'RECIPES'
 }
@@ -16,6 +16,7 @@ export interface Recipe {
   category: string;
   description: string;
   narrative: string;
+  hint?: string;
   input: string;
   query: string;
 }
