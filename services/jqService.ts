@@ -1,9 +1,11 @@
 // Type definition for the global jq object provided by the script
 declare global {
   interface Window {
-    jq: {
+    // The global jq object is a promise that resolves to the API
+    jq: Promise<{
       json: (json: any, filter: string) => Promise<any>;
-    };
+      raw: (json: string, filter: string) => Promise<string>;
+    }>;
   }
 }
 
@@ -14,21 +16,9 @@ export const checkJqAvailable = (): boolean => {
 };
 
 export const executeJq = async (jsonInput: string, filter: string): Promise<string> => {
-  // Retry mechanism for initialization race conditions
-  // ASM.js version can take a bit longer to parse and initialize
-  if (!window.jq) {
-    let retries = 0;
-    // Try for about 10 seconds (50 * 200ms)
-    while (retries < 50) {
-      if (window.jq) break;
-      await sleep(200);
-      retries++;
-    }
-  }
+  // The jq-web library initializes asynchronously. We must await the promise.
 
-  if (!window.jq) {
-    return "Error: jq library not loaded.\n\nPossible causes:\n1. CDN (unpkg.com) is blocked or slow.\n2. Internet connection is unstable.\n\nPlease check your browser console for script loading errors and refresh the page.";
-  }
+  // The retry logic is no longer needed, we can await the promise directly.
 
   if (!filter.trim()) return jsonInput;
 
@@ -42,7 +32,8 @@ export const executeJq = async (jsonInput: string, filter: string): Promise<stri
 
     // jq-web expects a JS object and a filter string
     // It returns a promise that resolves to the result
-    const result = await window.jq.json(parsedJson, filter);
+    const jqApi = await window.jq;
+    const result = await jqApi.json(parsedJson, filter);
     
     // jq-web result formatting
     return JSON.stringify(result, null, 2);
