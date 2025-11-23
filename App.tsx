@@ -57,6 +57,7 @@ interface PlaygroundProps {
   onToggleChallenge?: () => void;
   onChallengeComplete?: () => void;
   readOnly?: boolean;
+  onInteraction?: () => void;
 }
 
 const PlaygroundView: React.FC<PlaygroundProps> = ({
@@ -66,7 +67,8 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   expectedResult,
   onToggleChallenge,
   onChallengeComplete,
-  readOnly = false
+  readOnly = false,
+  onInteraction
 }) => {
   const [inputMode, setInputMode] = useState<'text' | 'url' | 'file'>('text');
   const [jsonInput, setJsonInput] = useState(initialJson || JSON.stringify(SAMPLE_JSON, null, 2));
@@ -199,7 +201,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   return (
     <div className="flex flex-col h-full p-2 sm:p-4 gap-2 sm:gap-4 bg-gray-50" onKeyDown={handleKeyDown}>
       <div className="flex flex-col gap-2 bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm">
-        {/* Top row: Title + Input Mode + Run */}
+        {/* Top row: Title + Input Mode */}
         <div className="flex justify-between items-center gap-2">
           <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
             <h2 className="text-lg sm:text-xl font-bold text-gray-800 hidden sm:block">Playground</h2>
@@ -218,13 +220,6 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
               </button>
             </div>
           </div>
-          <button
-            onClick={handleRun}
-            disabled={loading || !isJqReady}
-            className={`font-bold py-2 px-3 sm:px-4 rounded flex items-center gap-2 shadow-sm whitespace-nowrap ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'} text-sm sm:text-base`}
-          >
-            {loading ? <span className="hidden sm:inline">Processing...</span> : <><PlayIcon /> <span className="hidden sm:inline">{challengeMode ? 'Check' : 'Run'}</span></>}
-          </button>
         </div>
 
         {/* Bottom row: Loading status + Challenge toggle + Hint */}
@@ -273,8 +268,10 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
         </>
       )}
 
-      <div className="flex gap-2 sm:gap-4 items-center">
-        <span className="font-mono text-jq-blue font-bold text-base sm:text-lg">jq</span>
+      <div className="flex gap-2 sm:gap-4 items-start">
+        <div className="pt-2">
+          <span className="font-mono text-jq-blue font-bold text-base sm:text-lg">jq</span>
+        </div>
         <div className={`flex-1 border border-gray-300 rounded focus-within:border-jq-blue focus-within:ring-1 focus-within:ring-jq-blue shadow-sm bg-white overflow-hidden query-editor`}>
           <Editor
             value={query}
@@ -287,11 +284,19 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
               fontFamily: '"Fira Code", "Fira Mono", monospace',
               fontSize: 14,
               backgroundColor: '#ffffff',
-              minHeight: '80px',
+              minHeight: '42px',
             }}
             textareaClassName="focus:outline-none"
           />
         </div>
+        <button
+          onClick={handleRun}
+          disabled={loading || !isJqReady}
+          className={`font-bold py-2 px-3 sm:px-4 rounded flex items-center gap-2 shadow-sm whitespace-nowrap h-full self-stretch ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'} text-sm sm:text-base`}
+        >
+          {loading ? <span className="hidden sm:inline">...</span> : <PlayIcon />}
+          <span className="hidden sm:inline">{challengeMode ? 'Check' : 'Run'}</span>
+        </button>
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row gap-2 sm:gap-4 min-h-0">
@@ -306,8 +311,13 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           </div>
 
           {inputMode === 'text' && (
-            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative min-h-[250px] md:min-h-0" style={{ overflow: wrapInput ? 'auto' : 'scroll' }}>
-              <div className={wrapInput ? 'input-wrap-enabled' : 'input-wrap-disabled'}>
+            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative min-h-[150px] md:min-h-0 flex flex-col" style={{ overflow: 'hidden' }}>
+              <div
+                className={`flex-1 ${wrapInput ? 'input-wrap-enabled' : 'input-wrap-disabled'}`}
+                style={{ overflow: 'auto' }}
+                onScroll={() => onInteraction?.()}
+                onClick={() => onInteraction?.()}
+              >
                 <Editor
                   value={jsonInput}
                   onValueChange={readOnly ? () => { } : (code => setJsonInput(code))}
@@ -385,7 +395,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
             </button>
           </div>
 
-          <div className={`flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto shadow-sm min-h-[250px] md:min-h-0 ${wrapOutput ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>
+          <div className={`flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto shadow-sm min-h-[150px] md:min-h-0 ${wrapOutput ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>
             {output || (loading ? "Running jq..." : "// Output will appear here")}
           </div>
 
@@ -430,7 +440,10 @@ const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, 
       <div className="flex justify-between items-start mb-2 cursor-pointer" onClick={() => onLoad(recipe)}>
         <div className="flex-1">
           <span className="text-[10px] font-bold text-jq-blue uppercase tracking-wide">{recipe.category}</span>
-          <h3 className="text-sm font-bold text-gray-800 mt-1 group-hover:text-jq-blue">{recipe.title}</h3>
+          <h3 className="text-sm font-bold text-gray-800 mt-1 group-hover:text-jq-blue">
+            <span className="text-gray-400 mr-2">#{recipe.id}</span>
+            {recipe.title}
+          </h3>
         </div>
         <button onClick={(e) => { e.stopPropagation(); onLoad(recipe); onCollapseMobile(); }} className="text-jq-blue hover:text-jq-dark opacity-0 group-hover:opacity-100 transition-opacity">
           <PlayIcon />
@@ -490,6 +503,8 @@ const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, 
     </div>
   );
 };
+
+
 
 const RecipeAndPlaygroundView: React.FC = () => {
   const [json, setJson] = useState(JSON.stringify(SAMPLE_JSON, null, 2));
@@ -584,109 +599,127 @@ const RecipeAndPlaygroundView: React.FC = () => {
     return matchesCategory && matchesSearch && matchesProgress;
   });
 
+  // Ensure selected recipe is always visible in the list (even if filter changes)
+  // This is a backup in case the filter logic above is insufficient or if we want to force it.
+  // The logic above `(!progress.isRead(r.id) || r.id === selectedRecipeId)` should handle the "NEW" case.
+  // But let's verify if we need to explicitly add it back if it was filtered out by other means? 
+  // For now, the filter logic seems correct for the "NEW" bug.
+
+  // However, on mobile, we want to show the CurrentRecipeCard when a recipe is selected.
+  // And maybe hide the list or keep it collapsed.
+
   const stats = progress.getStats();
 
   return (
     <div className="flex flex-col md:flex-row h-full bg-gray-50">
       {/* Left Pane: Recipes List - Collapsible on mobile */}
-      <div className={`w-full md:w-1/3 md:min-w-[350px] border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50 flex flex-col transition-all duration-300 ${mobileRecipesExpanded ? 'max-h-[60vh]' : 'max-h-12'} md:max-h-full overflow-hidden md:overflow-y-auto`}>
+      <div className={`w-full md:w-1/3 md:min-w-[350px] border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50 flex flex-col transition-all duration-300 ${mobileRecipesExpanded ? 'max-h-[75vh]' : 'max-h-12'} md:max-h-full overflow-hidden`}>
         {/* Mobile: Show compact header - Desktop: Full header */}
         <div className="md:hidden bg-jq-blue text-white p-3 font-bold flex justify-between items-center cursor-pointer shrink-0" onClick={() => setMobileRecipesExpanded(!mobileRecipesExpanded)}>
           <span>📚 Recipes ({filteredRecipes.length})</span>
           <span className="text-xs opacity-75">{mobileRecipesExpanded ? '▼ Collapse' : '▶ Expand'}</span>
         </div>
-        <div className={`p-3 sm:p-4 border-b border-gray-200 bg-white space-y-3 ${mobileRecipesExpanded ? 'block' : 'hidden'} md:block overflow-y-auto md:overflow-visible`}>
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-gray-800">Recipe Book</h2>
-            {stats.completed > 0 && (
-              <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">
-                {stats.completed} ✓
-              </span>
+
+        <div className={`flex-1 overflow-y-auto bg-gray-50 ${mobileRecipesExpanded ? 'block' : 'hidden'} md:block`}>
+          {/* Header Controls (Filters, Search, Categories) - Now scrollable with the list */}
+          <div className="p-3 sm:p-4 border-b border-gray-200 bg-white space-y-3">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold text-gray-800">Recipe Book</h2>
+              {stats.completed > 0 && (
+                <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">
+                  {stats.completed} ✓
+                </span>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                onClick={() => setProgressFilter('all')}
+                className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'all' ? 'bg-jq-blue text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                All
+              </button>
+              <button
+                onClick={() => setProgressFilter('new')}
+                className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'new' ? 'bg-purple-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                New
+              </button>
+              <button
+                onClick={() => setProgressFilter('done')}
+                className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'done' ? 'bg-green-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                Done
+              </button>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search recipes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-jq-blue focus:ring-1 focus:ring-jq-blue text-sm"
+              />
+              <div className="absolute right-3 top-2.5 text-gray-400">
+                <SearchIcon />
+              </div>
+            </div>
+
+            <details open={categoriesExpanded} onToggle={(e) => setCategoriesExpanded((e.target as HTMLDetailsElement).open)} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <summary className="px-3 py-2 cursor-pointer hover:bg-gray-50 text-xs font-bold text-gray-700 flex items-center justify-between">
+                <span>Categories ({categories.length})</span>
+                <span className="text-gray-400">{categoriesExpanded ? '▼' : '▶'}</span>
+              </summary>
+              <div className="flex gap-2 flex-wrap p-3 pt-2 max-h-32 overflow-y-auto">
+                {categories.map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setCategory(c)}
+                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            </details>
+          </div>
+
+          {/* Recipe List */}
+          <div className="p-4 space-y-4">
+            {filteredRecipes.map(recipe => (
+              <RecipeItem
+                key={recipe.id}
+                recipe={recipe}
+                onLoad={loadRecipe}
+                challengeMode={challengeMode}
+                isSelected={recipe.id === selectedRecipeId}
+                isCompleted={progress.isCompleted(recipe.id)}
+                onToggleComplete={progress.toggleCompleted}
+                onCollapseMobile={() => setMobileRecipesExpanded(false)}
+              />
+            ))}
+            {filteredRecipes.length === 0 && (
+              <div className="text-center text-gray-400 py-8 text-sm">No recipes found matching your search.</div>
             )}
           </div>
-
-          <div className="flex gap-2">
-            <button
-              onClick={() => setProgressFilter('all')}
-              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'all' ? 'bg-jq-blue text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >
-              All
-            </button>
-            <button
-              onClick={() => setProgressFilter('new')}
-              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'new' ? 'bg-purple-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >
-              New
-            </button>
-            <button
-              onClick={() => setProgressFilter('done')}
-              className={`flex-1 px-3 py-2 rounded text-xs font-bold transition-colors ${progressFilter === 'done' ? 'bg-green-500 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
-            >
-              Done
-            </button>
-          </div>
-
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search recipes..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-jq-blue focus:ring-1 focus:ring-jq-blue text-sm"
-            />
-            <div className="absolute right-3 top-2.5 text-gray-400">
-              <SearchIcon />
-            </div>
-          </div>
-
-          <details open={categoriesExpanded} onToggle={(e) => setCategoriesExpanded((e.target as HTMLDetailsElement).open)} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <summary className="px-3 py-2 cursor-pointer hover:bg-gray-50 text-xs font-bold text-gray-700 flex items-center justify-between">
-              <span>Categories ({categories.length})</span>
-              <span className="text-gray-400">{categoriesExpanded ? '▼' : '▶'}</span>
-            </summary>
-            <div className="flex gap-2 flex-wrap p-3 pt-2 max-h-32 overflow-y-auto">
-              {categories.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </details>
-        </div>
-        <div className={`flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 ${mobileRecipesExpanded ? 'block' : 'hidden'} md:block`}>
-          {filteredRecipes.map(recipe => (
-            <RecipeItem
-              key={recipe.id}
-              recipe={recipe}
-              onLoad={loadRecipe}
-              challengeMode={challengeMode}
-              isSelected={recipe.id === selectedRecipeId}
-              isCompleted={progress.isCompleted(recipe.id)}
-              onToggleComplete={progress.toggleCompleted}
-              onCollapseMobile={() => setMobileRecipesExpanded(false)}
-            />
-          ))}
-          {filteredRecipes.length === 0 && (
-            <div className="text-center text-gray-400 py-8 text-sm">No recipes found matching your search.</div>
-          )}
         </div>
       </div>
 
       {/* Right Pane: Playground */}
-      <div className="flex-1 min-w-0 overflow-y-auto">
-        <PlaygroundView
-          initialJson={json}
-          initialQuery={query}
-          challengeMode={challengeMode}
-          expectedResult={expectedResult}
-          onToggleChallenge={handleToggleChallenge}
-          onChallengeComplete={handleChallengeComplete}
-          readOnly={true}
-        />
+      <div className="flex-1 min-w-0 overflow-y-auto flex flex-col">
+        <div className="flex-1 min-h-0">
+          <PlaygroundView
+            initialJson={json}
+            initialQuery={query}
+            challengeMode={challengeMode}
+            expectedResult={expectedResult}
+            onToggleChallenge={handleToggleChallenge}
+            onChallengeComplete={handleChallengeComplete}
+            readOnly={true}
+            onInteraction={() => setMobileRecipesExpanded(false)}
+          />
+        </div>
       </div>
     </div>
   );
@@ -767,6 +800,25 @@ function App() {
             <NavButton icon={<RecipeIcon />} label="Recipes" active={currentView === AppView.RECIPES} onClick={() => handleViewChange(AppView.RECIPES)} collapsed={isSidebarCollapsed} />
             <div className="border-t border-gray-100 my-2 mx-2"></div>
             <NavButton icon={<BookIcon />} label="Docs" active={currentView === AppView.MANUAL} onClick={() => handleViewChange(AppView.MANUAL)} collapsed={isSidebarCollapsed} />
+
+            <div className="mt-8">
+              <button
+                onClick={() => {
+                  if (confirm("Are you sure you want to reset all progress? This cannot be undone.")) {
+                    // We need to access the progress hook here, but it's inside RecipeAndPlaygroundView.
+                    // We should probably lift the state or just clear localStorage directly here for simplicity
+                    // since we are at the App level.
+                    localStorage.removeItem('jq-master-progress');
+                    window.location.reload(); // Simple reload to reset state
+                  }
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-red-500 hover:bg-red-50 ${isSidebarCollapsed ? 'justify-center' : ''}`}
+                title="Reset Progress"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                {!isSidebarCollapsed && <span className="font-medium text-sm">Reset</span>}
+              </button>
+            </div>
           </div>
         </div>
 

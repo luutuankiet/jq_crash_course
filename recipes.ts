@@ -85,13 +85,12 @@ const GEOJSON_FEATURE_JSON = {
 };
 
 
-export const RECIPES: Recipe[] = [
+const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   // ==========================================
   // 1. BASICS: NAVIGATION & EXTRACTION
   // Focus: Selecting, drilling down, and inspecting structure
   // ==========================================
   {
-    id: "foundational-001-identity",
     title: "Identity: Output the Input",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you output the entire input JSON document without any changes?",
@@ -101,7 +100,6 @@ export const RECIPES: Recipe[] = [
     query: "."
   },
   {
-    id: "foundational-002-basic-field-access",
     title: "Basic Field Access",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you access the value of the `users` key from the top-level object?",
@@ -111,7 +109,6 @@ export const RECIPES: Recipe[] = [
     query: ".users"
   },
   {
-    id: "foundational-003-array-indexing",
     title: "Array Indexing",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you retrieve only the first element from the `users` array?",
@@ -121,7 +118,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[0]"
   },
   {
-    id: "foundational-004-nested-access",
     title: "Nested Field Access",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you extract the `name` of the first user in the `users` array?",
@@ -131,7 +127,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[0].name"
   },
   {
-    id: "foundational-005-array-iteration",
     title: "Array Iteration with .[]",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you take an array of users and output each user object as a separate item in a stream?",
@@ -141,7 +136,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[]"
   },
   {
-    id: "foundational-006-pipe-operator",
     title: "The Pipe Operator |",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you produce a stream of just the `name` for each user in the `users` array?",
@@ -151,7 +145,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[] | .name"
   },
   {
-    id: "foundational-010-length",
     title: "Get Length",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you find the number of users in the array and the character length of the first user's name?",
@@ -161,7 +154,6 @@ export const RECIPES: Recipe[] = [
     query: "{user_count: .users | length, first_name_length: .users[0].name | length}"
   },
   {
-    id: "foundational-011-keys",
     title: "Get Object Keys",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you get a list of all the keys present in the first user object?",
@@ -171,7 +163,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[0] | keys"
   },
   {
-    id: "intermediate-060-array-slicing",
     title: "Array Slicing",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you extract specific subsets of an array, such as the first three elements, a middle section, and the last two elements?",
@@ -181,7 +172,6 @@ export const RECIPES: Recipe[] = [
     query: "{ first_three: .[:3], middle_three: .[1:4], last_two: .[-2:] }"
   },
   {
-    id: "advanced-076-path",
     title: "Finding Paths with `path`",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you find the exact JSON path to every value that is equal to the string 'admin'?",
@@ -191,7 +181,6 @@ export const RECIPES: Recipe[] = [
     query: "path(.users[].roles[] == \"admin\")"
   },
   {
-    id: "advanced-099-get-paths",
     title: "Get Paths of Values",
     category: " Basics: Navigation & Extraction",
     description: "Problem: How would you generate a list of all possible navigation paths for a given JSON object?",
@@ -206,7 +195,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Building new JSON objects, arrays, and strings
   // ==========================================
   {
-    id: "foundational-007-object-construction",
     title: "Simple Object Construction",
     category: " Basics: Construction & Output",
     description: "Problem: How would you construct a new object with a custom key `first_user_name` containing the first user's name, and `total_users` containing the total count from the metadata?",
@@ -216,7 +204,6 @@ export const RECIPES: Recipe[] = [
     query: "{ first_user_name: .users[0].name, total_users: .meta.total }"
   },
   {
-    id: "foundational-008-object-shorthand",
     title: "Object Construction Shorthand",
     category: " Basics: Construction & Output",
     description: "Problem: For each user, how would you create a new, simpler object containing only their `id` and `name`?",
@@ -226,7 +213,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[] | {id, name}"
   },
   {
-    id: "foundational-009-array-construction",
     title: "Array Construction with []",
     category: " Basics: Construction & Output",
     description: "Problem: How would you produce a single JSON array containing just the names of all users?",
@@ -236,7 +222,6 @@ export const RECIPES: Recipe[] = [
     query: "[.users[] | .name]"
   },
   {
-    id: "intermediate-066-string-interpolation",
     title: "String Interpolation",
     category: " Basics: Construction & Output",
     description: "Problem: How would you create a formatted string like 'User Alice has ID 1.' by embedding values from the input object?",
@@ -246,7 +231,6 @@ export const RECIPES: Recipe[] = [
     query: "\"User \\(.name) has ID \\(.id).\""
   },
   {
-    id: "advanced-080-conditional-object-fields",
     title: "Conditional Object Fields",
     category: " Basics: Construction & Output",
     description: "Problem: How would you transform an array of objects, adding a new key `opt_key` only if the original object contains an 'optional' field?",
@@ -261,7 +245,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Processing lists, sorting, and reshaping arrays
   // ==========================================
   {
-    id: "intermediate-026-map",
     title: "Transforming Arrays with `map`",
     category: " Arrays & Iteration",
     description: "Problem: How would you transform an array of user objects into a new array where each object only contains the `name` and `id`?",
@@ -271,7 +254,6 @@ export const RECIPES: Recipe[] = [
     query: ".users | map({name, id})"
   },
   {
-    id: "foundational-018-unique",
     title: "Get Unique Array Values",
     category: " Arrays & Iteration",
     description: "Problem: How would you compile a list of all user roles from all users, and then produce a final, sorted list with no duplicates?",
@@ -281,7 +263,6 @@ export const RECIPES: Recipe[] = [
     query: "[.users[].roles[]] | unique"
   },
   {
-    id: "foundational-019-sort",
     title: "Sorting an Array",
     category: " Arrays & Iteration",
     description: "Problem: How would you produce a new array containing all user names, sorted alphabetically?",
@@ -291,7 +272,6 @@ export const RECIPES: Recipe[] = [
     query: "[.users[] | .name] | sort"
   },
   {
-    id: "advanced-079-sort-by-multiple-keys",
     title: "Sort by Multiple Keys",
     category: " Arrays & Iteration",
     description: "Problem: How would you sort a list of log entries first by message alphabetically, and then by log level?",
@@ -301,7 +281,6 @@ export const RECIPES: Recipe[] = [
     query: "sort_by(.msg) | sort_by(.level)"
   },
   {
-    id: "intermediate-068-flatten",
     title: "Flattening Nested Arrays",
     category: " Arrays & Iteration",
     description: "Problem: How would you take a nested array (an array of arrays) and combine all its elements into a single, one-dimensional array?",
@@ -311,7 +290,6 @@ export const RECIPES: Recipe[] = [
     query: "flatten"
   },
   {
-    id: "advanced-068-join",
     title: "Joining Array Elements",
     category: " Arrays & Iteration",
     description: "Problem: How would you take an array of roles and combine them into a single, comma-separated string?",
@@ -326,7 +304,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Conditionals, selection, and boolean logic
   // ==========================================
   {
-    id: "foundational-012-select-equality",
     title: "Filtering with `select`",
     category: " Filtering & Logic",
     description: "Problem: How would you filter a list of log entries to show only those where the `level` is 'ERROR'?",
@@ -336,7 +313,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.level == \"ERROR\")"
   },
   {
-    id: "foundational-013-select-numeric",
     title: "Filtering by Numeric Condition",
     category: " Filtering & Logic",
     description: "Problem: How would you filter a list of log entries to find only those with a latency greater than or equal to 500?",
@@ -346,7 +322,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.context.latency_ms >= 500)"
   },
   {
-    id: "foundational-014-has",
     title: "Check if Key Exists with `has`",
     category: " Filtering & Logic",
     description: "Problem: How would you filter a list of log entries to find only the ones that contain a `latency_ms` key?",
@@ -356,7 +331,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.context | has(\"latency_ms\"))"
   },
   {
-    id: "foundational-016-boolean-logic",
     title: "Boolean Logic `and`/`or`",
     category: " Filtering & Logic",
     description: "Problem: How would you filter log entries to find those that are both an 'ERROR' level and occurred in the 'us-east-1' region?",
@@ -366,7 +340,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select((.level == \"ERROR\") and (.context.region == \"us-east-1\"))"
   },
   {
-    id: "intermediate-029-alternative-operator",
     title: "Default Values with `//`",
     category: " Filtering & Logic",
     description: "Problem: How would you process a list of logs, ensuring that if a log's `context.service` field is missing, it defaults to the string 'unknown'?",
@@ -376,7 +349,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {msg, service: (.context.service // \"unknown\")}"
   },
   {
-    id: "intermediate-022-if-then-else",
     title: "Conditional Logic `if-then-else`",
     category: " Filtering & Logic",
     description: "Problem: How would you add a new field `type` to each user object, setting its value to 'Admin User' if they have the 'admin' role, and 'Regular User' otherwise?",
@@ -386,7 +358,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[] | . + {type: (if .roles | contains([\"admin\"]) then \"Admin User\" else \"Regular User\" end)}"
   },
   {
-    id: "intermediate-067-any-all",
     title: "Boolean Aggregation `any`/`all`",
     category: " Filtering & Logic",
     description: "Problem: For each user, how would you add a boolean field `is_admin` that is true if any of their roles is 'admin'?",
@@ -396,7 +367,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {name, is_admin: (.roles | any(. == \"admin\"))}"
   },
   {
-    id: "intermediate-061-type-checking",
     title: "Checking Data Types",
     category: " Filtering & Logic",
     description: "Problem: How would you inspect an array of mixed data types and output a list of objects, each showing the original value and its corresponding JSON type?",
@@ -411,7 +381,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Modifying objects, merging, reshaping
   // ==========================================
   {
-    id: "foundational-020-del",
     title: "Deleting a Field",
     category: " Object Manipulation",
     description: "Problem: How would you remove the `email` field from every user object in the list?",
@@ -421,7 +390,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[] | del(.email)"
   },
   {
-    id: "intermediate-021-update-assignment",
     title: "Update Assignment `|=`",
     category: " Object Manipulation",
     description: "Problem: How would you update the `name` of the first user to be all uppercase, without changing any other data?",
@@ -431,7 +399,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[0].name |= ascii_upcase"
   },
   {
-    id: "foundational-092-addition-merging",
     title: "Merging Objects",
     category: " Object Manipulation",
     description: "Problem: How would you combine two objects into one, where keys from the second object overwrite keys from the first in case of a conflict?",
@@ -441,7 +408,6 @@ export const RECIPES: Recipe[] = [
     query: ".o1 + .o2"
   },
   {
-    id: "advanced-094-deep-merging-objects",
     title: "Deep (Recursive) Merging",
     category: " Object Manipulation",
     description: "Problem: How would you merge two configuration objects, where nested objects are also merged recursively instead of being replaced?",
@@ -454,7 +420,6 @@ export const RECIPES: Recipe[] = [
     query: ".[0] * .[1]"
   },
   {
-    id: "advanced-065-diffing-objects",
     title: "Diffing Objects",
     category: " Object Manipulation",
     description: "Problem: How would you compare two objects and produce a new object that shows only the key-value pairs that have changed?",
@@ -464,7 +429,6 @@ export const RECIPES: Recipe[] = [
     query: ".[1] - .[0]"
   },
   {
-    id: "intermediate-027-to-entries",
     title: "Object to Array (`to_entries`)",
     category: " Object Manipulation",
     description: "Problem: How would you convert an object into an array of key-value pairs, where each element is an object like `{\"key\": \"some_key\", \"value\": \"some_value\"}`?",
@@ -474,7 +438,6 @@ export const RECIPES: Recipe[] = [
     query: ".meta | to_entries"
   },
   {
-    id: "intermediate-028-from-entries",
     title: "Array to Object (`from_entries`)",
     category: " Object Manipulation",
     description: "Problem: How would you take an array of `{\"key\": ..., \"value\": ...}` objects and convert it back into a standard JSON object?",
@@ -484,7 +447,6 @@ export const RECIPES: Recipe[] = [
     query: "from_entries"
   },
   {
-    id: "advanced-077-map-values",
     title: "Transform Object Values",
     category: " Object Manipulation",
     description: "Problem: How would you apply a transformation to every value in an object, such as doubling all numeric values while leaving others unchanged?",
@@ -494,7 +456,6 @@ export const RECIPES: Recipe[] = [
     query: "map_values(if type==\"number\" then . * 2 else . end)"
   },
   {
-    id: "advanced-100-get-set-path",
     title: "Get and Set by Path",
     category: " Object Manipulation",
     description: "Problem: How would you programmatically update a deeply nested value in an object using a path that is defined in an array (e.g., `[\"a\", \"b\", 1]`)?",
@@ -509,7 +470,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Math, Strings, Regex, Encodings, Dates
   // ==========================================
   {
-    id: "intermediate-059-multiplication-division",
     title: "Math: Basic Arithmetic",
     category: " Data Transformation",
     description: "Problem: How would you calculate a `total_cost` by multiplying the `quantity` by the `price_per_item`?",
@@ -519,7 +479,6 @@ export const RECIPES: Recipe[] = [
     query: "{ total_cost: (.quantity * .price_per_item) }"
   },
   {
-    id: "intermediate-058-subtraction",
     title: "Math: Subtraction & Sets",
     category: " Data Transformation",
     description: "Problem: How would you calculate a final price by subtracting a discount, and also find the missing items in a user's permissions array compared to all permissions?",
@@ -529,7 +488,6 @@ export const RECIPES: Recipe[] = [
     query: "{ final_price: (.price - .discount), missing: (.all - .user) }"
   },
   {
-    id: "advanced-083-handling-nulls-in-arithmetic",
     title: "Math: Handling Nulls",
     category: " Data Transformation",
     description: "Problem: How would you safely perform a subtraction where the price or discount might be `null`, treating any `null` value as zero?",
@@ -539,7 +497,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {final_price: ((.price // 0) - (.discount // 0))}"
   },
   {
-    id: "foundational-015-string-contains",
     title: "String: Contains",
     category: " Data Transformation",
     description: "Problem: How would you filter a list of log entries to find only those whose message contains the word 'Database'?",
@@ -549,7 +506,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.msg | contains(\"Database\"))"
   },
   {
-    id: "intermediate-063-startswith-endswith",
     title: "String: Starts/Ends With",
     category: " Data Transformation",
     description: "Problem: How would you filter a list of filenames to select only the ones that end with the '.log' extension?",
@@ -559,7 +515,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(endswith(\".log\"))"
   },
   {
-    id: "intermediate-062-string-splitting",
     title: "String: Splitting",
     category: " Data Transformation",
     description: "Problem: How would you take a single comma-separated string of tags and convert it into a JSON array of individual tag strings?",
@@ -569,7 +524,6 @@ export const RECIPES: Recipe[] = [
     query: ".tags | split(\",\")"
   },
   {
-    id: "intermediate-064-regex-test",
     title: "Regex: Test",
     category: " Data Transformation",
     description: "Problem: How would you filter a list of users to find only those whose email address ends in '@gmail.com' or '@outlook.com'?",
@@ -579,7 +533,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.email | test(\"@(gmail|outlook)\\\\.com$\"))"
   },
   {
-    id: "intermediate-065-regex-capture",
     title: "Regex: Capture",
     category: " Data Transformation",
     description: "Problem: How would you parse an email address to extract the username and the domain into a new object with `user` and `domain` keys?",
@@ -589,7 +542,6 @@ export const RECIPES: Recipe[] = [
     query: ".email | capture(\"^(?<user>[^@]+)@(?<domain>.+)\")"
   },
   {
-    id: "advanced-081-base64-encoding",
     title: "Encoding: Base64",
     category: " Data Transformation",
     description: "Problem: How would you take a string, encode it into Base64, and then decode it back to the original string?",
@@ -599,7 +551,6 @@ export const RECIPES: Recipe[] = [
     query: "{encoded: (.text | @base64), decoded: (.text | @base64 | @base64d)}"
   },
   {
-    id: "advanced-082-uri-encoding",
     title: "Encoding: URI",
     category: " Data Transformation",
     description: "Problem: How would you safely construct a URL by taking a query string with special characters (like '&') and properly percent-encoding it?",
@@ -609,7 +560,6 @@ export const RECIPES: Recipe[] = [
     query: "\"https://google.com/search?q=\\(.query | @uri)\""
   },
   {
-    id: "advanced-078-datetime-formatting",
     title: "Date/Time Formatting",
     category: " Data Transformation",
     description: "Problem: How would you convert a Unix timestamp (a number) into a human-readable date string formatted as 'YYYY-MM-DD HH:MM:SS'?",
@@ -624,7 +574,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Grouping, Counting, Summing
   // ==========================================
   {
-    id: "foundational-017-add-values",
     title: "Summing with `add`",
     category: " Aggregation & Summary",
     description: "Problem: How would you calculate the sum of all user IDs?",
@@ -634,7 +583,6 @@ export const RECIPES: Recipe[] = [
     query: "[.users[] | .id] | add"
   },
   {
-    id: "intermediate-024-group-by",
     title: "Grouping with `group_by`",
     category: " Aggregation & Summary",
     description: "Problem: How would you take a flat list of log entries and group them into separate arrays based on the region they came from?",
@@ -644,7 +592,6 @@ export const RECIPES: Recipe[] = [
     query: "group_by(.context.region)"
   },
   {
-    id: "intermediate-025-group-and-count",
     title: "Group By and Count",
     category: " Aggregation & Summary",
     description: "Problem: How would you create a summary report showing each region and the total number of log entries for that region?",
@@ -654,7 +601,6 @@ export const RECIPES: Recipe[] = [
     query: "group_by(.context.region) | map({region: .[0].context.region, count: length})"
   },
   {
-    id: "advanced-095-reduce",
     title: "Advanced Aggregation with `reduce`",
     category: " Aggregation & Summary",
     description: "Problem: How would you transform an array of user objects into a single lookup object (a map) where keys are user IDs and values are user names?",
@@ -669,7 +615,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Infrastructure, Logs, Configs, AWS/K8s
   // ==========================================
   {
-    id: "real-world-logs-069-filter-by-timestamp",
     title: "Logs: Filter by Timestamp",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you filter a stream of log entries to find only those that occurred within a specific time window (e.g., between two timestamps)?",
@@ -679,7 +624,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.ts >= 1610000050 and .ts < 1610000100)"
   },
   {
-    id: "real-world-logs-070-log-level-counts",
     title: "Logs: Count by Level",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you create a summary report showing the count of log entries for each severity level (e.g., INFO, ERROR, WARN)?",
@@ -689,7 +633,6 @@ export const RECIPES: Recipe[] = [
     query: "group_by(.level) | map({level: .[0].level, count: length})"
   },
   {
-    id: "aws-053-ec2-instance-ips",
     title: "AWS: Get EC2 IPs",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you parse the JSON output from an AWS CLI command to extract a list of all non-null Public IP addresses for your EC2 instances?",
@@ -699,7 +642,6 @@ export const RECIPES: Recipe[] = [
     query: ".Reservations[].Instances[] | .PublicIpAddress | select(. != null)"
   },
   {
-    id: "aws-054-flatten-ec2-tags",
     title: "AWS: Flatten Tags",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you convert the AWS tag format, an array of `{\"Key\": ..., \"Value\": ...}` objects, into a simple, flat JSON object of key-value pairs?",
@@ -709,7 +651,6 @@ export const RECIPES: Recipe[] = [
     query: "{InstanceId, Tags: (.Tags | map({key: .Key, value: .Value}) | from_entries)}"
   },
   {
-    id: "aws-055-find-instance-by-tag",
     title: "AWS: Find Instance by Tag",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you find the Instance ID of all EC2 instances that have a tag 'Env' with the value 'prod'?",
@@ -719,7 +660,6 @@ export const RECIPES: Recipe[] = [
     query: ".Reservations[].Instances[] | select((.Tags | map({key: .Key, value: .Value}) | from_entries).Env == \"prod\") | .InstanceId"
   },
   {
-    id: "docker-058-parse-env-vars",
     title: "Docker: Parse Env Vars",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you parse a Docker container's environment variables, which are given as an array of 'KEY=VALUE' strings, into a single JSON object?",
@@ -729,7 +669,6 @@ export const RECIPES: Recipe[] = [
     query: ".Config.Env | map(split(\"=\") | {key: .[0], value: .[1]}) | from_entries"
   },
   {
-    id: "k8s-059-pod-status",
     title: "K8s: Get Pod Status",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you process the JSON output from `kubectl get pods` to create a simple report showing each pod's name and its current phase (e.g., 'Running', 'Pending')?",
@@ -739,7 +678,6 @@ export const RECIPES: Recipe[] = [
     query: ".items[] | {name: .metadata.name, status: .status.phase}"
   },
   {
-    id: "k8s-060-find-crashing-pods",
     title: "K8s: Find Crashing Pods",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you find the names of all Kubernetes pods that have a container with a restart count greater than 5?",
@@ -749,7 +687,6 @@ export const RECIPES: Recipe[] = [
     query: ".items[] | select(.status.containerStatuses | any(.restartCount > 5)) | .metadata.name"
   },
   {
-    id: "real-world-genai-074-token-cost",
     title: "GenAI: Calculate Token Cost",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: From a GenAI trace, how would you calculate the estimated cost of an LLM call by multiplying the total tokens used by a fixed rate per token?",
@@ -759,7 +696,6 @@ export const RECIPES: Recipe[] = [
     query: ".spans[] | select(.attributes.\"llm.usage.total_tokens\") | {model: .attributes.\"llm.request.model\", cost: (.attributes.\"llm.usage.total_tokens\" * 0.00003)}"
   },
   {
-    id: "real-world-genai-075-parse-tool-args",
     title: "GenAI: Parse Tool Arguments",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: In a GenAI trace, the arguments for a tool call are stored as a JSON string inside another JSON object. How would you parse this nested string into a usable JSON object?",
@@ -769,7 +705,6 @@ export const RECIPES: Recipe[] = [
     query: ".spans[] | select(.name == \"tool_execution\") | .attributes.\"tool.args\" | fromjson"
   },
   {
-    id: "advanced-097-env-var-export",
     title: "Generate .env File",
     category: " Scenario: Cloud & DevOps",
     description: "Problem: How would you convert a JSON object of key-value pairs into a series of 'KEY=VALUE' strings suitable for a .env file?",
@@ -784,7 +719,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Web APIs, SQL, CSV, GeoJSON
   // ==========================================
   {
-    id: "github-041-list-repo-names",
     title: "GitHub: List Names",
     category: " Scenario: APIs & Data",
     description: "Problem: From a GitHub API response listing repositories, how would you extract just the name of each repository?",
@@ -794,7 +728,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | .name"
   },
   {
-    id: "github-042-find-forked-repos",
     title: "GitHub: Find Forks",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you filter a list of GitHub repositories to find only the ones that are forks?",
@@ -804,7 +737,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.fork == true)"
   },
   {
-    id: "github-043-count-stargazers",
     title: "GitHub: Star Count Report",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you transform a list of GitHub repositories into a simplified list of objects, where each object contains only the repo's name and its star count (renamed to `stars`)?",
@@ -814,7 +746,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {name, stars: .stargazers_count}"
   },
   {
-    id: "github-044-sort-by-stars",
     title: "GitHub: Sort Repos by Stars",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you sort a list of GitHub repositories by their star count in descending order (most popular first)?",
@@ -824,7 +755,6 @@ export const RECIPES: Recipe[] = [
     query: "sort_by(.stargazers_count) | reverse | .[] | {name, stars: .stargazers_count}"
   },
   {
-    id: "github-045-list-languages",
     title: "GitHub: Get Unique Languages",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you scan a list of repositories and produce a single, sorted array of all unique programming languages used across them?",
@@ -834,7 +764,6 @@ export const RECIPES: Recipe[] = [
     query: "[.[] | .language] | unique"
   },
   {
-    id: "github-046-find-issues-by-label",
     title: "GitHub: Find Issues by Label",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you filter a list of GitHub issues to find only those that have the 'bug' label?",
@@ -844,7 +773,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | select(.labels | any(.name == \"bug\"))"
   },
   {
-    id: "stripe-048-list-charge-amounts",
     title: "Stripe: List Amounts",
     category: " Scenario: APIs & Data",
     description: "Problem: Given a paginated API response from Stripe, how would you extract the `amount` from each charge object within the `data` array?",
@@ -854,7 +782,6 @@ export const RECIPES: Recipe[] = [
     query: ".data[] | .amount"
   },
   {
-    id: "stripe-049-successful-charges",
     title: "Stripe: Filter Successful Charges",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you filter a list of Stripe charges to find only the ones with a `status` of 'succeeded'?",
@@ -864,7 +791,6 @@ export const RECIPES: Recipe[] = [
     query: ".data[] | select(.status == \"succeeded\")"
   },
   {
-    id: "stripe-050-normalize-currency",
     title: "Stripe: Normalize Currency",
     category: " Scenario: APIs & Data",
     description: "Problem: Given that Stripe amounts are in cents, how would you convert the amount for each charge into dollars by dividing by 100?",
@@ -874,7 +800,6 @@ export const RECIPES: Recipe[] = [
     query: ".data[] | {id, amount_dollars: (.amount / 100)}"
   },
   {
-    id: "stripe-051-sum-by-currency",
     title: "Stripe: Sum Revenue by Currency",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you calculate the total revenue (sum of amounts) for each currency (e.g., 'usd', 'eur') from a list of charges?",
@@ -884,7 +809,6 @@ export const RECIPES: Recipe[] = [
     query: ".data | group_by(.currency) | map({currency: .[0].currency, total: (map(.amount) | add)})"
   },
   {
-    id: "stripe-052-flatten-metadata",
     title: "Stripe: Flatten Metadata",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you take a Stripe charge object and merge the fields from its nested `metadata` object into the top level of the charge object?",
@@ -894,7 +818,6 @@ export const RECIPES: Recipe[] = [
     query: ". + .metadata | del(.metadata)"
   },
   {
-    id: "real-world-geojson-071-feature-coordinates",
     title: "GeoJSON: Get Coordinates",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you extract a list of all coordinate pairs from a GeoJSON FeatureCollection object?",
@@ -904,7 +827,6 @@ export const RECIPES: Recipe[] = [
     query: ".features[] | .geometry.coordinates"
   },
   {
-    id: "real-world-geojson-072-feature-properties",
     title: "GeoJSON: Get Properties",
     category: " Scenario: APIs & Data",
     description: "Problem: From a GeoJSON FeatureCollection, how would you extract the `properties` object (containing metadata like the name) for each feature?",
@@ -914,7 +836,6 @@ export const RECIPES: Recipe[] = [
     query: ".features[] | .properties"
   },
   {
-    id: "real-world-bq-073-pivot-attributes",
     title: "BigQuery: Pivot Attributes",
     category: " Scenario: APIs & Data",
     description: "Problem: From a BigQuery export where custom attributes are stored in a single JSON string, how would you parse that string and flatten its contents into the parent object?",
@@ -924,7 +845,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {row_id} + (.custom_attributes | fromjson | from_entries)"
   },
   {
-    id: "advanced-069-generate-sql",
     title: "Generate SQL Statements",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you convert an array of user objects into a series of SQL `INSERT` statements?",
@@ -934,7 +854,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | \"INSERT INTO users (id, name, email) VALUES (\\(.id), '\\(.name)', '\\(.email)');\""
   },
   {
-    id: "advanced-064-from-to-json",
     title: "Parsing JSON within JSON",
     category: " Scenario: APIs & Data",
     description: "Problem: How would you parse a field that is a string, but its content is itself a valid JSON object, turning it into a queryable object?",
@@ -949,7 +868,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Power user features, flags, scripting
   // ==========================================
   {
-    id: "intermediate-023-variables",
     title: "Using Variables `as`",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you use a value from the top-level of a document (like total user count) inside a filter that is iterating over an inner array (like the users array)?",
@@ -959,7 +877,6 @@ export const RECIPES: Recipe[] = [
     query: ".meta.total as $total | .users[] | \"User \\(.name) is one of \\($total) total users.\""
   },
   {
-    id: "advanced-067-arg-variables",
     title: "CLI Arguments (`--arg`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you write a generic query to filter users by a role, where the specific role ('admin', 'editor', etc.) is passed in as a command-line argument?",
@@ -969,7 +886,6 @@ export const RECIPES: Recipe[] = [
     query: ".users[] | select(.roles | contains([$role]))"
   },
   {
-    id: "advanced-097-cli-raw-output-flag",
     title: "Raw Output Flag (`-r`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you output a stream of strings, but without the surrounding JSON quotes, so they can be piped to other shell commands?",
@@ -979,7 +895,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | \"\\(.id), \\(.name)\""
   },
   {
-    id: "advanced-098-cli-compact-output-flag",
     title: "Compact Output Flag (`-c`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you process an array of objects so that each resulting JSON object is printed on a single line, creating a Newline Delimited JSON (NDJSON) stream?",
@@ -989,7 +904,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | {id, name}"
   },
   {
-    id: "advanced-096-cli-slurp-flag",
     title: "Slurp Flag (`-s`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you process a file where each line is a separate JSON object (like a log file), by first reading all of them into a single JSON array?",
@@ -999,7 +913,6 @@ export const RECIPES: Recipe[] = [
     query: "{count: length, error_count: (map(select(.level==\"error\")) | length)}"
   },
   {
-    id: "intermediate-030-error-suppression",
     title: "Error Suppression `?`",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you access a potentially missing field (like `.context.latency_ms`) across many objects without causing an error, outputting `null` if it's not found?",
@@ -1009,7 +922,6 @@ export const RECIPES: Recipe[] = [
     query: "[.[] | .context.latency_ms?]"
   },
   {
-    id: "intermediate-093-fromjson-safe",
     title: "Safe Parsing (`try-catch`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you attempt to parse a list of strings as JSON, but if a string is invalid JSON, you output the original string instead of erroring out?",
@@ -1019,7 +931,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | try fromjson catch ."
   },
   {
-    id: "advanced-061-recursive-descent",
     title: "Recursive Descent `..`",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you find all values associated with a specific key (e.g., `IPAddress`) no matter how deeply nested they are within a complex JSON document?",
@@ -1029,7 +940,6 @@ export const RECIPES: Recipe[] = [
     query: ".. | .IPAddress? | select(. != null)"
   },
   {
-    id: "advanced-066-walk",
     title: "Recursive Modification (`walk`)",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you recursively traverse an entire JSON document and redact the value of any key named `API_KEY`, regardless of its location?",
@@ -1039,7 +949,6 @@ export const RECIPES: Recipe[] = [
     query: "walk(if type == \"object\" and has(\"API_KEY\") then .API_KEY |= \"REDACTED\" else . end)"
   },
   {
-    id: "advanced-062-defining-functions",
     title: "Defining Functions `def`",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you define a reusable function, `to_dollars`, that divides a number by 100, and then apply it to a field in your JSON?",
@@ -1049,7 +958,6 @@ export const RECIPES: Recipe[] = [
     query: "def to_dollars: . / 100; {amount: (.amount | to_dollars)}"
   },
   {
-    id: "advanced-084-slurpfile-join",
     title: "Joining Two Data Sources",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you enrich a log file containing user IDs by joining it with a second JSON file (a user lookup table) to add the corresponding user name to each log entry?",
@@ -1062,7 +970,6 @@ export const RECIPES: Recipe[] = [
     query: "($users_file | map({(.id|tostring): .name}) | add) as $lookup | .logs[] | . + {user_name: $lookup[(.user_id|tostring)]}"
   },
   {
-    id: "advanced-085-comments",
     title: "Using Comments",
     category: " Advanced Concepts & CLI",
     description: "Problem: How would you add comments to a jq script to explain the purpose of different parts of the filter?",
@@ -1077,7 +984,6 @@ export const RECIPES: Recipe[] = [
   // Focus: Logic puzzles, recursion, and CS concepts
   // ==========================================
   {
-    id: "fun-086-word-count",
     title: "Word Count",
     category: " Algorithms & Fun",
     description: "Problem: How would you take a sentence, split it into words, and produce a summary of how many times each word appears?",
@@ -1087,7 +993,6 @@ export const RECIPES: Recipe[] = [
     query: ".text | split(\" \") | group_by(.) | map({word: .[0], count: length})"
   },
   {
-    id: "fun-089-fizzbuzz",
     title: "FizzBuzz",
     category: " Algorithms & Fun",
     description: "Problem: How would you generate numbers from 1 to 15, replacing multiples of 3 with 'Fizz', multiples of 5 with 'Buzz', and multiples of both with 'FizzBuzz'?",
@@ -1097,7 +1002,6 @@ export const RECIPES: Recipe[] = [
     query: "[range(1; 16) | if . % 15 == 0 then \"FizzBuzz\" elif . % 3 == 0 then \"Fizz\" elif . % 5 == 0 then \"Buzz\" else . end]"
   },
   {
-    id: "fun-090-fibonacci",
     title: "Fibonacci Sequence",
     category: " Algorithms & Fun",
     description: "Problem: How would you generate the first 10 numbers of the Fibonacci sequence?",
@@ -1107,7 +1011,6 @@ export const RECIPES: Recipe[] = [
     query: "[0,1] | recurse( (.[0] + .[1]) as $sum | [.[1], $sum] ) | .[0] | limit(10; .)"
   },
   {
-    id: "fun-087-ascii-bar-chart",
     title: "ASCII Bar Chart",
     category: " Algorithms & Fun",
     description: "Problem: How would you transform an array of labeled data points into a simple text-based bar chart using the '=' character for visualization?",
@@ -1117,7 +1020,6 @@ export const RECIPES: Recipe[] = [
     query: ".[] | \"\\(.label) | \\(\"=\" * .value)\""
   },
   {
-    id: "fun-088-permutations",
     title: "Array Permutations",
     category: " Algorithms & Fun",
     description: "Problem: How would you generate all possible orderings (permutations) of the elements in a given array?",
@@ -1127,7 +1029,6 @@ export const RECIPES: Recipe[] = [
     query: "def permutations: if length == 0 then [[]] else . as $in | reduce .[] as $x ([]; . + ($in - [$x] | permutations | map([$x] + .))) end; permutations"
   },
   {
-    id: "fun-091-pascals-triangle",
     title: "Pascal's Triangle",
     category: " Algorithms & Fun",
     description: "Problem: How would you algorithmically generate the first 5 rows of Pascal's Triangle?",
@@ -1137,7 +1038,6 @@ export const RECIPES: Recipe[] = [
     query: "def next_row: [0] + . as $row | . + [0] | [range(length + 1) | $row[.] + .[.]]; [1] | recurse(next_row) | limit(5; .)"
   },
   {
-    id: "advanced-094-transpose-matrix",
     title: "Transposing a Matrix",
     category: " Algorithms & Fun",
     description: "Problem: How would you transpose a matrix represented as an array of arrays (swapping its rows and columns)?",
@@ -1147,3 +1047,8 @@ export const RECIPES: Recipe[] = [
     query: "if . == [] then [] else . as $in | (map(length) | max) as $max | range($max) | map(range($in | length) | $in[.] | .[.]) end"
   }
 ];
+
+export const RECIPES: Recipe[] = RECIPE_DEFINITIONS.map((recipe, index) => ({
+  ...recipe,
+  id: (index + 1).toString(),
+}));
