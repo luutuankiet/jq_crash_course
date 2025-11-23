@@ -32,6 +32,8 @@ const HomeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height
 const SearchIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
 const WrapIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15l4 4 4-4" /><path d="M4 9l4-4 4 4" /><path d="M20 19H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h12" /></svg>;
 const CheckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>;
+const MenuIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>;
+const XIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>;
 
 // --- Components ---
 
@@ -195,40 +197,56 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full p-4 gap-4 bg-gray-50" onKeyDown={handleKeyDown}>
-      <div className="flex justify-between items-center bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
-        <div className="flex items-center gap-4">
-          <h2 className="text-xl font-bold text-gray-800 hidden md:block">Playground</h2>
-          <div className="flex bg-gray-100 rounded p-1 border border-gray-200">
-            <button onClick={() => setInputMode('text')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'text' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><TextIcon /> Text</button>
-            <button onClick={() => setInputMode('url')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'url' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><GlobeIcon /> URL</button>
-            <button onClick={() => setInputMode('file')} className={`px-3 py-1 rounded text-xs font-bold flex items-center gap-2 ${inputMode === 'file' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}><UploadIcon /> File</button>
-          </div>
-          <span className="text-[10px] text-gray-400 hidden lg:inline">💡 Load JSON from URL or File!</span>
-        </div>
-        <div className="flex items-center gap-4">
-          {!isJqReady && <span className="text-xs text-amber-600 animate-pulse font-medium">Loading jq engine...</span>}
-          <span className="text-xs text-gray-500 hidden md:inline">Cmd/Ctrl + Enter to run</span>
-
-          {onToggleChallenge && (
-            <div className="flex items-center gap-2 mr-2" title="Hide answers and test your skills!">
-              <label className="text-xs font-bold text-gray-500 cursor-pointer" onClick={onToggleChallenge}>Challenge Mode</label>
-              <div
-                className={`w-10 h-5 rounded-full p-1 cursor-pointer transition-colors ${challengeMode ? 'bg-jq-blue' : 'bg-gray-300'}`}
-                onClick={onToggleChallenge}
-              >
-                <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${challengeMode ? 'translate-x-5' : 'translate-x-0'}`} />
-              </div>
+    <div className="flex flex-col h-full p-2 sm:p-4 gap-2 sm:gap-4 bg-gray-50" onKeyDown={handleKeyDown}>
+      <div className="flex flex-col gap-2 bg-white p-2 sm:p-3 rounded-lg border border-gray-200 shadow-sm">
+        {/* Top row: Title + Input Mode + Run */}
+        <div className="flex justify-between items-center gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 hidden sm:block">Playground</h2>
+            <div className="flex bg-gray-100 rounded p-1 border border-gray-200">
+              <button onClick={() => setInputMode('text')} className={`px-2 sm:px-3 py-1 rounded text-xs font-bold flex items-center gap-1 ${inputMode === 'text' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
+                <TextIcon />
+                <span className="hidden sm:inline">Text</span>
+              </button>
+              <button onClick={() => setInputMode('url')} className={`px-2 sm:px-3 py-1 rounded text-xs font-bold flex items-center gap-1 ${inputMode === 'url' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
+                <GlobeIcon />
+                <span className="hidden sm:inline">URL</span>
+              </button>
+              <button onClick={() => setInputMode('file')} className={`px-2 sm:px-3 py-1 rounded text-xs font-bold flex items-center gap-1 ${inputMode === 'file' ? 'bg-white text-jq-blue shadow-sm' : 'text-gray-500 hover:text-gray-800'}`}>
+                <UploadIcon />
+                <span className="hidden sm:inline">File</span>
+              </button>
             </div>
-          )}
-
+          </div>
           <button
             onClick={handleRun}
             disabled={loading || !isJqReady}
-            className={`font-bold py-2 px-4 rounded flex items-center gap-2 shadow-sm ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'}`}
+            className={`font-bold py-2 px-3 sm:px-4 rounded flex items-center gap-2 shadow-sm whitespace-nowrap ${loading || !isJqReady ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-500 text-white'} text-sm sm:text-base`}
           >
-            {loading ? 'Processing...' : <><PlayIcon /> {challengeMode ? 'Check Answer' : 'Run'}</>}
+            {loading ? <span className="hidden sm:inline">Processing...</span> : <><PlayIcon /> <span className="hidden sm:inline">{challengeMode ? 'Check' : 'Run'}</span></>}
           </button>
+        </div>
+
+        {/* Bottom row: Loading status + Challenge toggle + Hint */}
+        <div className="flex justify-between items-center gap-2 text-xs">
+          <div className="flex items-center gap-2">
+            {!isJqReady && <span className="text-amber-600 animate-pulse font-medium">Loading...</span>}
+            <span className="text-gray-400 hidden lg:inline">💡 Load JSON from URL or File!</span>
+          </div>
+          <div className="flex items-center gap-2 sm:gap-4">
+            <span className="text-gray-500 hidden md:inline">Cmd/Ctrl + Enter</span>
+            {onToggleChallenge && (
+              <div className="flex items-center gap-2" title="Hide answers and test your skills!">
+                <label className="font-bold text-gray-500 cursor-pointer hidden sm:inline" onClick={onToggleChallenge}>Challenge</label>
+                <div
+                  className={`w-10 h-5 rounded-full p-1 cursor-pointer transition-colors ${challengeMode ? 'bg-jq-blue' : 'bg-gray-300'}`}
+                  onClick={onToggleChallenge}
+                >
+                  <div className={`w-3 h-3 bg-white rounded-full shadow-sm transform transition-transform ${challengeMode ? 'translate-x-5' : 'translate-x-0'}`} />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
@@ -255,8 +273,8 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
         </>
       )}
 
-      <div className="flex gap-4 items-center">
-        <span className="font-mono text-jq-blue font-bold text-lg">jq</span>
+      <div className="flex gap-2 sm:gap-4 items-center">
+        <span className="font-mono text-jq-blue font-bold text-base sm:text-lg">jq</span>
         <div className={`flex-1 border border-gray-300 rounded focus-within:border-jq-blue focus-within:ring-1 focus-within:ring-jq-blue shadow-sm bg-white overflow-hidden query-editor`}>
           <Editor
             value={query}
@@ -276,7 +294,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
+      <div className="flex-1 flex flex-col md:flex-row gap-2 sm:gap-4 min-h-0">
         <div className="flex-1 md:w-1/2 flex flex-col min-h-0 relative">
           <div className="flex justify-between items-center mb-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Input JSON</label>
@@ -288,7 +306,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           </div>
 
           {inputMode === 'text' && (
-            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative" style={{ overflow: wrapInput ? 'auto' : 'scroll' }}>
+            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative min-h-[250px] md:min-h-0" style={{ overflow: wrapInput ? 'auto' : 'scroll' }}>
               <div className={wrapInput ? 'input-wrap-enabled' : 'input-wrap-disabled'}>
                 <Editor
                   value={jsonInput}
@@ -367,14 +385,14 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
             </button>
           </div>
 
-          <div className={`flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto shadow-sm ${wrapOutput ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>
+          <div className={`flex-1 bg-gray-900 border border-gray-300 text-green-400 font-mono text-sm p-4 rounded overflow-auto shadow-sm min-h-[250px] md:min-h-0 ${wrapOutput ? 'whitespace-pre-wrap' : 'whitespace-pre'}`}>
             {output || (loading ? "Running jq..." : "// Output will appear here")}
           </div>
 
           {challengeMode && diffParts && (
             <div className="mt-4 flex-1 flex flex-col min-h-0">
               <label className="text-xs font-bold text-red-500 mb-2 uppercase tracking-wide">Diff (Expected vs Actual)</label>
-              <div className="flex-1 bg-gray-50 border border-red-200 text-gray-800 font-mono text-xs p-4 rounded overflow-auto whitespace-pre shadow-sm">
+              <div className="flex-1 bg-gray-50 border border-red-200 text-gray-800 font-mono text-xs p-4 rounded overflow-auto whitespace-pre shadow-sm min-h-[150px] md:min-h-0">
                 {diffParts.map((part, index) => {
                   const color = part.added ? 'bg-green-100 text-green-800' :
                     part.removed ? 'bg-red-100 text-red-800' : 'text-gray-500';
@@ -401,19 +419,20 @@ interface RecipeItemProps {
   isSelected: boolean;
   isCompleted: boolean;
   onToggleComplete: (recipeId: string) => void;
+  onCollapseMobile: () => void;
 }
 
-const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, isSelected, isCompleted, onToggleComplete }) => {
+const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, isSelected, isCompleted, onToggleComplete, onCollapseMobile }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className={`bg-white border border-gray-200 rounded p-4 hover:border-jq-light hover:shadow-md transition-all group shadow-sm ${isSelected ? 'recipe-card-selected' : ''} ${isCompleted ? 'recipe-card-completed' : ''}`}>
+    <div id={`recipe-${recipe.id}`} className={`bg-white border border-gray-200 rounded p-4 hover:border-jq-light hover:shadow-md transition-all group shadow-sm ${isSelected ? 'recipe-card-selected' : ''} ${isCompleted ? 'recipe-card-completed' : ''}`}>
       <div className="flex justify-between items-start mb-2 cursor-pointer" onClick={() => onLoad(recipe)}>
         <div className="flex-1">
           <span className="text-[10px] font-bold text-jq-blue uppercase tracking-wide">{recipe.category}</span>
           <h3 className="text-sm font-bold text-gray-800 mt-1 group-hover:text-jq-blue">{recipe.title}</h3>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); onLoad(recipe); }} className="text-jq-blue hover:text-jq-dark opacity-0 group-hover:opacity-100 transition-opacity">
+        <button onClick={(e) => { e.stopPropagation(); onLoad(recipe); onCollapseMobile(); }} className="text-jq-blue hover:text-jq-dark opacity-0 group-hover:opacity-100 transition-opacity">
           <PlayIcon />
         </button>
       </div>
@@ -444,6 +463,17 @@ const RecipeItem: React.FC<RecipeItemProps> = ({ recipe, onLoad, challengeMode, 
           </button>
         )}
       </div>
+
+      {isSelected && (
+        <div className="mt-3 md:hidden">
+          <button
+            onClick={(e) => { e.stopPropagation(); onCollapseMobile(); }}
+            className="w-full bg-jq-blue text-white font-bold py-2 rounded flex items-center justify-center gap-2 text-sm shadow-sm active:scale-95 transition-transform"
+          >
+            <CodeIcon /> Start Coding
+          </button>
+        </div>
+      )}
 
       {expanded && (
         <div className="mt-2 space-y-2">
@@ -526,6 +556,19 @@ const RecipeAndPlaygroundView: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [progressFilter, setProgressFilter] = useState<'all' | 'new' | 'done'>('all');
   const [categoriesExpanded, setCategoriesExpanded] = useState(false);
+  const [mobileRecipesExpanded, setMobileRecipesExpanded] = useState(false);
+
+  // Scroll selected recipe into view when expanding list on mobile
+  useEffect(() => {
+    if (mobileRecipesExpanded && selectedRecipeId) {
+      setTimeout(() => {
+        const el = document.getElementById(`recipe-${selectedRecipeId}`);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 100);
+    }
+  }, [mobileRecipesExpanded, selectedRecipeId]);
 
   const categories = ["All", ...Array.from(new Set(RECIPES.map(r => r.category)))];
 
@@ -544,10 +587,15 @@ const RecipeAndPlaygroundView: React.FC = () => {
   const stats = progress.getStats();
 
   return (
-    <div className="flex h-full bg-gray-50">
-      {/* Left Pane: Recipes List */}
-      <div className="w-1/3 min-w-[350px] border-r border-gray-200 bg-gray-50 flex flex-col">
-        <div className="p-4 border-b border-gray-200 bg-white space-y-3">
+    <div className="flex flex-col md:flex-row h-full bg-gray-50">
+      {/* Left Pane: Recipes List - Collapsible on mobile */}
+      <div className={`w-full md:w-1/3 md:min-w-[350px] border-b md:border-b-0 md:border-r border-gray-200 bg-gray-50 flex flex-col transition-all duration-300 ${mobileRecipesExpanded ? 'max-h-[60vh]' : 'max-h-12'} md:max-h-full overflow-hidden md:overflow-y-auto`}>
+        {/* Mobile: Show compact header - Desktop: Full header */}
+        <div className="md:hidden bg-jq-blue text-white p-3 font-bold flex justify-between items-center cursor-pointer shrink-0" onClick={() => setMobileRecipesExpanded(!mobileRecipesExpanded)}>
+          <span>📚 Recipes ({filteredRecipes.length})</span>
+          <span className="text-xs opacity-75">{mobileRecipesExpanded ? '▼ Collapse' : '▶ Expand'}</span>
+        </div>
+        <div className={`p-3 sm:p-4 border-b border-gray-200 bg-white space-y-3 ${mobileRecipesExpanded ? 'block' : 'hidden'} md:block overflow-y-auto md:overflow-visible`}>
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-800">Recipe Book</h2>
             {stats.completed > 0 && (
@@ -609,7 +657,7 @@ const RecipeAndPlaygroundView: React.FC = () => {
             </div>
           </details>
         </div>
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+        <div className={`flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 ${mobileRecipesExpanded ? 'block' : 'hidden'} md:block`}>
           {filteredRecipes.map(recipe => (
             <RecipeItem
               key={recipe.id}
@@ -619,6 +667,7 @@ const RecipeAndPlaygroundView: React.FC = () => {
               isSelected={recipe.id === selectedRecipeId}
               isCompleted={progress.isCompleted(recipe.id)}
               onToggleComplete={progress.toggleCompleted}
+              onCollapseMobile={() => setMobileRecipesExpanded(false)}
             />
           ))}
           {filteredRecipes.length === 0 && (
@@ -628,7 +677,7 @@ const RecipeAndPlaygroundView: React.FC = () => {
       </div>
 
       {/* Right Pane: Playground */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 overflow-y-auto">
         <PlaygroundView
           initialJson={json}
           initialQuery={query}
@@ -645,15 +694,23 @@ const RecipeAndPlaygroundView: React.FC = () => {
 
 // --- Main App Shell ---
 
-const App: React.FC = () => {
-  const [view, setView] = useState<AppView>(AppView.HOME);
+function App() {
+  const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // Close mobile sidebar when changing views
+  const handleViewChange = (view: AppView) => {
+    setCurrentView(view);
+    setIsMobileSidebarOpen(false);
+  };
 
   // Auto-collapse sidebar on mobile/tablet
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1024) {
         setIsSidebarCollapsed(true);
+        setIsMobileSidebarOpen(false); // Close mobile sidebar on resize if it was open
       }
     };
 
@@ -663,55 +720,53 @@ const App: React.FC = () => {
   }, []);
 
   const renderView = () => {
-    switch (view) {
-      case AppView.HOME: return <HomeView onNavigate={setView} />;
+    switch (currentView) {
+      case AppView.HOME: return <HomeView onNavigate={handleViewChange} />;
       case AppView.MANUAL: return <ManualView />;
       case AppView.PLAYGROUND: return <PlaygroundView />;
       case AppView.RECIPES: return <RecipeAndPlaygroundView />;
-      default: return <HomeView onNavigate={setView} />;
+      default: return <HomeView onNavigate={handleViewChange} />;
     }
   };
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800 font-sans">
+    <div className="h-screen flex overflow-hidden">
+      {/* Mobile Backdrop */}
+      {isMobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile Hamburger Button */}
+      <button
+        onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+        className="fixed top-4 left-4 z-50 md:hidden bg-white p-2 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50"
+        aria-label="Toggle menu"
+      >
+        {isMobileSidebarOpen ? <XIcon /> : <MenuIcon />}
+      </button>
+
       {/* Sidebar Navigation */}
-      <nav className={`${isSidebarCollapsed ? 'w-16' : 'w-16 md:w-64'} bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 transition-all duration-300 z-10 shadow-sm`}>
+      <nav className={`
+        ${isSidebarCollapsed ? 'w-16' : 'w-16 md:w-64'} 
+        bg-white border-r border-gray-200 flex flex-col justify-between shrink-0 transition-all duration-300 shadow-sm
+        fixed md:relative h-full z-40
+        ${isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
         <div>
           <div className={`p-4 ${isSidebarCollapsed ? 'justify-center' : 'md:p-6 justify-center md:justify-start'} flex items-center gap-3 border-b border-gray-100`}>
-            <div className="w-8 h-8 bg-jq-blue rounded flex items-center justify-center font-bold text-white shrink-0 cursor-pointer shadow-sm" onClick={() => setView(AppView.HOME)}>jq</div>
+            <div className="w-8 h-8 bg-jq-blue rounded flex items-center justify-center font-bold text-white shrink-0 cursor-pointer shadow-sm" onClick={() => handleViewChange(AppView.HOME)}>jq</div>
             {!isSidebarCollapsed && <span className="font-bold text-xl tracking-tight hidden md:block text-gray-800">Master</span>}
           </div>
 
           <div className="p-2 md:p-4 space-y-1 md:space-y-2">
-            <NavButton
-              active={view === AppView.HOME}
-              onClick={() => setView(AppView.HOME)}
-              icon={<HomeIcon />}
-              label="Home"
-              collapsed={isSidebarCollapsed}
-            />
-            <NavButton
-              active={view === AppView.PLAYGROUND}
-              onClick={() => setView(AppView.PLAYGROUND)}
-              icon={<CodeIcon />}
-              label="Playground"
-              collapsed={isSidebarCollapsed}
-            />
-            <NavButton
-              active={view === AppView.RECIPES}
-              onClick={() => setView(AppView.RECIPES)}
-              icon={<RecipeIcon />}
-              label="Recipes"
-              collapsed={isSidebarCollapsed}
-            />
+            <NavButton icon={<HomeIcon />} label="Home" active={currentView === AppView.HOME} onClick={() => handleViewChange(AppView.HOME)} collapsed={isSidebarCollapsed} />
+            <NavButton icon={<CodeIcon />} label="Playground" active={currentView === AppView.PLAYGROUND} onClick={() => handleViewChange(AppView.PLAYGROUND)} collapsed={isSidebarCollapsed} />
+            <NavButton icon={<RecipeIcon />} label="Recipes" active={currentView === AppView.RECIPES} onClick={() => handleViewChange(AppView.RECIPES)} collapsed={isSidebarCollapsed} />
             <div className="border-t border-gray-100 my-2 mx-2"></div>
-            <NavButton
-              active={view === AppView.MANUAL}
-              onClick={() => setView(AppView.MANUAL)}
-              icon={<BookIcon />}
-              label="Manual"
-              collapsed={isSidebarCollapsed}
-            />
+            <NavButton icon={<BookIcon />} label="Docs" active={currentView === AppView.MANUAL} onClick={() => handleViewChange(AppView.MANUAL)} collapsed={isSidebarCollapsed} />
           </div>
         </div>
 
