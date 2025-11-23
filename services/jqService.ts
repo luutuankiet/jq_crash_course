@@ -34,7 +34,7 @@ export const executeJq = async (jsonInput: string, filter: string): Promise<stri
     // It returns a promise that resolves to the result
     const jqApi = await window.jq;
     const result = await jqApi.json(parsedJson, filter);
-    
+
     // jq-web result formatting
     return JSON.stringify(result, null, 2);
   } catch (error: any) {
@@ -43,9 +43,11 @@ export const executeJq = async (jsonInput: string, filter: string): Promise<stri
   }
 };
 
-export const fetchJsonFromUrl = async (url: string): Promise<string> => {
+export const fetchJsonFromUrl = async (url: string, headers: Record<string, string> = {}): Promise<string> => {
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      headers: headers
+    });
     if (!response.ok) {
       throw new Error(`HTTP Status: ${response.status}`);
     }

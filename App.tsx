@@ -76,6 +76,8 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   const [isJqReady, setIsJqReady] = useState(false);
   const [wrapInput, setWrapInput] = useState(false);
   const [wrapOutput, setWrapOutput] = useState(false);
+  const [headersInput, setHeadersInput] = useState("");
+  const [showHeaders, setShowHeaders] = useState(false);
   const [challengeStatus, setChallengeStatus] = useState<'idle' | 'pass' | 'fail'>('idle');
   const [diffParts, setDiffParts] = useState<Diff.Change[] | null>(null);
 
@@ -158,7 +160,15 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
     setLoading(true);
     setErrorMsg("");
     try {
-      const data = await fetchJsonFromUrl(urlInput);
+      let headers = {};
+      if (headersInput.trim()) {
+        try {
+          headers = JSON.parse(headersInput);
+        } catch (e) {
+          throw new Error("Invalid headers JSON format");
+        }
+      }
+      const data = await fetchJsonFromUrl(urlInput, headers);
       setJsonInput(data);
       setInputMode('text');
     } catch (err: any) {
@@ -278,7 +288,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           </div>
 
           {inputMode === 'text' && (
-            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative overflow-auto">
+            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative" style={{ overflow: wrapInput ? 'auto' : 'scroll' }}>
               <div className={wrapInput ? 'input-wrap-enabled' : 'input-wrap-disabled'}>
                 <Editor
                   value={jsonInput}
@@ -299,11 +309,40 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           )}
 
           {inputMode === 'url' && (
-            <div className="flex-1 bg-white border border-gray-300 p-8 rounded flex flex-col items-center justify-center gap-4 shadow-sm">
+            <div className="flex-1 bg-white border border-gray-300 p-6 rounded flex flex-col gap-4 shadow-sm overflow-auto">
               <h3 className="text-lg font-bold text-gray-800">Fetch JSON from URL</h3>
-              <div className="flex w-full max-w-lg gap-2">
-                <input type="text" value={urlInput} onChange={(e) => setUrlInput(e.target.value)} className="flex-1 bg-gray-50 border border-gray-300 p-2 rounded text-gray-800 focus:outline-none focus:border-jq-blue" />
-                <button onClick={handleFetchUrl} disabled={loading} className="bg-jq-blue hover:bg-jq-light px-4 rounded text-white font-bold">Fetch</button>
+              <div className="flex flex-col gap-3 w-full">
+                <input
+                  type="text"
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  placeholder="https://api.example.com/data"
+                  className="w-full bg-gray-50 border border-gray-300 p-2 rounded text-gray-800 text-sm focus:outline-none focus:border-jq-blue"
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setShowHeaders(!showHeaders)}
+                    className="text-xs text-gray-600 hover:text-jq-blue flex items-center gap-1"
+                  >
+                    {showHeaders ? '▼' : '▶'} Custom Headers (optional)
+                  </button>
+                </div>
+                {showHeaders && (
+                  <textarea
+                    value={headersInput}
+                    onChange={(e) => setHeadersInput(e.target.value)}
+                    placeholder='{"Authorization": "Bearer token", "Content-Type": "application/json"}'
+                    className="w-full bg-gray-50 border border-gray-300 p-2 rounded text-gray-800 text-xs font-mono focus:outline-none focus:border-jq-blue"
+                    rows={3}
+                  />
+                )}
+                <button
+                  onClick={handleFetchUrl}
+                  disabled={loading}
+                  className="bg-jq-blue hover:bg-jq-light px-4 py-2 rounded text-white font-bold w-full"
+                >
+                  {loading ? 'Fetching...' : 'Fetch'}
+                </button>
               </div>
               <p className="text-xs text-gray-500">Note: CORS must be enabled on the target server.</p>
               {errorMsg && <p className="text-red-500 text-sm font-bold">{errorMsg}</p>}
