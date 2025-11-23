@@ -579,7 +579,7 @@ const RecipeAndPlaygroundView: React.FC = () => {
       r.query.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesProgress =
       progressFilter === 'all' ? true :
-        progressFilter === 'new' ? !progress.isRead(r.id) :
+        progressFilter === 'new' ? (!progress.isRead(r.id) || r.id === selectedRecipeId) :
           progressFilter === 'done' ? progress.isCompleted(r.id) : true;
     return matchesCategory && matchesSearch && matchesProgress;
   });
