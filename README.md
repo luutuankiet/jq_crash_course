@@ -1,5 +1,8 @@
 # jq Playground - Master JSON Processing
 
+*Made with Google AI Studio and Antigravity ❤️ [https://antigravity.google](https://antigravity.google)*
+
+
 This project is an interactive, browser-based playground for learning and experimenting with `jq`, the powerful command-line JSON processor. It provides a simple, intuitive interface to test `jq` filters against JSON data without needing to install the `jq` CLI locally.
 
 **[Try the live demo!](https://luutuankiet.github.io/jq_crash_course/)**
@@ -54,7 +57,3 @@ This will test all recipes and report any errors.
 ## Deployment
 
 This application is configured for continuous deployment to GitHub Pages. Any push to the `main` branch will automatically trigger a build and deployment workflow.
-
-## Credits
-
-Made with Google AI Studio and Antigravity ❤️ [https://antigravity.google](https://antigravity.google)

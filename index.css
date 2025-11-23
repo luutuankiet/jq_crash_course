@@ -41,6 +41,19 @@ body {
   white-space: pre !important;
 }
 
+/* Input JSON specific wrap classes - targets all children */
+.input-wrap-enabled,
+.input-wrap-enabled * {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+.input-wrap-disabled,
+.input-wrap-disabled * {
+  white-space: pre !important;
+}
+
 /* Recipe card highlighting */
 .recipe-card-selected {
   border-color: #5DA9E9 !important;

@@ -54,6 +54,7 @@ interface PlaygroundProps {
   expectedResult?: any;
   onToggleChallenge?: () => void;
   onChallengeComplete?: () => void;
+  readOnly?: boolean;
 }
 
 const PlaygroundView: React.FC<PlaygroundProps> = ({
@@ -62,7 +63,8 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   challengeMode,
   expectedResult,
   onToggleChallenge,
-  onChallengeComplete
+  onChallengeComplete,
+  readOnly = false
 }) => {
   const [inputMode, setInputMode] = useState<'text' | 'url' | 'file'>('text');
   const [jsonInput, setJsonInput] = useState(initialJson || JSON.stringify(SAMPLE_JSON, null, 2));
@@ -231,11 +233,11 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
             {challengeStatus === 'idle' && "💪 Try to solve the challenge yourself!"}
           </div>
           {expectedResult !== undefined && (
-            <details className="bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
-              <summary className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm font-bold text-gray-600 flex items-center gap-2">
-                <span>🎯</span> Expected Result <span className="text-xs text-gray-400">(click to reveal)</span>
+            <details className="bg-blue-50 rounded-lg border-2 border-blue-400 overflow-hidden shadow-sm">
+              <summary className="px-4 py-3 cursor-pointer hover:bg-blue-100 text-sm font-bold text-blue-900 flex items-center gap-2 transition-colors">
+                <span>🎯</span> Expected Result <span className="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded font-bold">click to reveal</span>
               </summary>
-              <pre className="px-4 py-3 text-xs font-mono text-gray-700 overflow-x-auto bg-white border-t border-gray-200">
+              <pre className="px-4 py-3 text-xs font-mono text-gray-800 overflow-x-auto bg-white border-t-2 border-blue-400">
                 {JSON.stringify(expectedResult, null, 2)}
               </pre>
             </details>
@@ -265,7 +267,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
       </div>
 
       <div className="flex-1 flex flex-col md:flex-row gap-4 min-h-0">
-        <div className="flex-1 flex flex-col min-h-0 relative">
+        <div className="flex-1 md:w-1/2 flex flex-col min-h-0 relative">
           <div className="flex justify-between items-center mb-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Input JSON</label>
             {inputMode === 'text' && (
@@ -276,21 +278,21 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           </div>
 
           {inputMode === 'text' && (
-            <div className="flex-1 border border-gray-300 rounded overflow-auto shadow-sm bg-white relative">
-              <div className={wrapInput ? 'wrap-enabled h-full' : 'wrap-disabled h-full'}>
+            <div className="flex-1 border border-gray-300 rounded shadow-sm bg-white relative overflow-auto">
+              <div className={wrapInput ? 'input-wrap-enabled' : 'input-wrap-disabled'}>
                 <Editor
                   value={jsonInput}
-                  onValueChange={code => setJsonInput(code)}
+                  onValueChange={readOnly ? () => { } : (code => setJsonInput(code))}
                   highlight={code => highlight(code, languages.json, 'json')}
                   padding={16}
-                  className="font-mono text-sm h-full"
+                  className={`font-mono text-sm ${readOnly ? 'opacity-60' : ''}`}
                   style={{
                     fontFamily: '"Fira Code", "Fira Mono", monospace',
                     fontSize: 14,
-                    backgroundColor: '#ffffff',
-                    height: '100%'
+                    backgroundColor: readOnly ? '#f9fafb' : '#ffffff',
+                    cursor: readOnly ? 'not-allowed' : 'text'
                   }}
-                  textareaClassName="h-full"
+                  readOnly={readOnly}
                 />
               </div>
             </div>
@@ -318,7 +320,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
           )}
         </div>
 
-        <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-1 md:w-1/2 flex flex-col min-h-0">
           <div className="flex justify-between items-center mb-2">
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wide">Output Result</label>
             <button onClick={() => setWrapOutput(!wrapOutput)} className={`text-xs flex items-center gap-1 ${wrapOutput ? 'text-jq-blue font-bold' : 'text-gray-400'}`} title="Toggle Word Wrap">
@@ -426,11 +428,13 @@ const RecipeAndPlaygroundView: React.FC = () => {
   const [challengeMode, setChallengeMode] = useState(false);
   const [expectedResult, setExpectedResult] = useState<any>(undefined);
   const [selectedRecipeId, setSelectedRecipeId] = useState<string | null>(null);
+  const [currentRecipe, setCurrentRecipe] = useState<Recipe | null>(null);
   const progress = useRecipeProgress();
 
   const loadRecipe = async (r: Recipe) => {
     setJson(r.input);
     setSelectedRecipeId(r.id);
+    setCurrentRecipe(r);
     progress.markAsRead(r.id);
 
     if (challengeMode) {
@@ -449,6 +453,30 @@ const RecipeAndPlaygroundView: React.FC = () => {
     }
   };
 
+  // Recalculate expected result when toggling challenge mode ON
+  React.useEffect(() => {
+    if (challengeMode && currentRecipe && expectedResult === undefined) {
+      executeJq(currentRecipe.input, currentRecipe.query)
+        .then(result => setExpectedResult(JSON.parse(result)))
+        .catch(() => setExpectedResult(undefined));
+    } else if (!challengeMode) {
+      setExpectedResult(undefined);
+      if (currentRecipe) {
+        setQuery(currentRecipe.query);
+      }
+    }
+  }, [challengeMode]);
+
+  const handleToggleChallenge = () => {
+    setChallengeMode(prev => {
+      const newMode = !prev;
+      if (newMode && currentRecipe) {
+        setQuery("."); // Reset query when enabling challenge mode
+      }
+      return newMode;
+    });
+  };
+
   const handleChallengeComplete = () => {
     if (selectedRecipeId && !progress.isCompleted(selectedRecipeId)) {
       progress.toggleCompleted(selectedRecipeId);
@@ -458,6 +486,7 @@ const RecipeAndPlaygroundView: React.FC = () => {
   const [category, setCategory] = useState<string>("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [progressFilter, setProgressFilter] = useState<'all' | 'new' | 'done'>('all');
+  const [categoriesExpanded, setCategoriesExpanded] = useState(false);
 
   const categories = ["All", ...Array.from(new Set(RECIPES.map(r => r.category)))];
 
@@ -516,24 +545,30 @@ const RecipeAndPlaygroundView: React.FC = () => {
               placeholder="Search recipes..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded text-sm focus:outline-none focus:border-jq-blue focus:ring-1 focus:ring-jq-blue"
+              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-jq-blue focus:ring-1 focus:ring-jq-blue text-sm"
             />
-            <div className="absolute left-3 top-2.5 text-gray-400">
+            <div className="absolute right-3 top-2.5 text-gray-400">
               <SearchIcon />
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 pb-2">
-            {categories.map(c => (
-              <button
-                key={c}
-                onClick={() => setCategory(c)}
-                className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
+          <details open={categoriesExpanded} onToggle={(e) => setCategoriesExpanded((e.target as HTMLDetailsElement).open)} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+            <summary className="px-3 py-2 cursor-pointer hover:bg-gray-50 text-xs font-bold text-gray-700 flex items-center justify-between">
+              <span>Categories ({categories.length})</span>
+              <span className="text-gray-400">{categoriesExpanded ? '▼' : '▶'}</span>
+            </summary>
+            <div className="flex gap-2 flex-wrap p-3 pt-2 max-h-32 overflow-y-auto">
+              {categories.map(c => (
+                <button
+                  key={c}
+                  onClick={() => setCategory(c)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${category === c ? 'bg-jq-blue text-white' : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'}`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </details>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
           {filteredRecipes.map(recipe => (
@@ -560,8 +595,9 @@ const RecipeAndPlaygroundView: React.FC = () => {
           initialQuery={query}
           challengeMode={challengeMode}
           expectedResult={expectedResult}
-          onToggleChallenge={() => setChallengeMode(!challengeMode)}
+          onToggleChallenge={handleToggleChallenge}
           onChallengeComplete={handleChallengeComplete}
+          readOnly={true}
         />
       </div>
     </div>
