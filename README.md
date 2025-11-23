@@ -1,59 +1,129 @@
-# jq Playground - Master JSON Processing
+# jq Master 🎯
 
-*Made with Google AI Studio and Antigravity ❤️ [https://antigravity.google](https://antigravity.google)*
+**Master JSON processing in your browser. Zero install, 100% practical.**
 
+*Made with ❤️ using Google AI Studio and Antigravity  [https://antigravity.google](https://antigravity.google)*
 
-This project is an interactive, browser-based playground for learning and experimenting with `jq`, the powerful command-line JSON processor. It provides a simple, intuitive interface to test `jq` filters against JSON data without needing to install the `jq` CLI locally.
+<video src="https://raw.githubusercontent.com/luutuankiet/jq_crash_course/main/assets/demo.mp4" controls autoplay loop muted width="100%"></video>
 
-**[Try the live demo!](https://luutuankiet.github.io/jq_crash_course/)**
+**[→ Try it live](https://luutuankiet.github.io/jq_crash_course/)**
 
-## Features
+---
 
-- **Interactive Playground:** 
-    - **Syntax Highlighting:** Read and edit JSON with ease.
-    - **Flexible Input:** Paste raw text, fetch from a URL, or upload a JSON file.
-    - **Live Filtering:** See results update instantly as you type your query.
-- **Recipe Book:** A curated collection of 50+ real-world examples (Docker, Logs, APIs) to help you learn by doing.
-- **Challenge Mode:** Test your skills! Hide the answers and try to solve the puzzles yourself with helpful hints.
-- **Zero Installation:** Runs entirely in the browser using `jq-web`.
+## Why This Exists
+
+If you've ever wrestled with JSON in the terminal, you know `jq` is incredibly powerful—and sometimes intimidating. 
+
+This playground was built to bridge that gap. Whether you're a data engineer debugging pipeline outputs, an analytics engineer transforming API responses, or a developer just trying to parse some deeply nested JSON, you shouldn't need to fight with syntax.
+
+**The goal:** Make `jq` accessible, learnable, and actually fun to use. Because JSON is everywhere, and knowing how to wrangle it efficiently is a superpower.
+
+---
+
+## What You Get
+
+### 🎮 Interactive Playground
+- **Live Code Editor**: Write `jq` queries and see results update in real-time
+- **Syntax Highlighting**: Easy-to-read JSON and query syntax
+- **Flexible Input**: Paste JSON, fetch from URLs (with custom headers!), or upload files
+- **Word Wrap & Scroll**: Because not all JSON fits nicely on one screen
+
+### 📚 100+ Real-World Recipes
+We're not talking toy examples. These are patterns you'll actually use:
+- **Docker** container inspection and log parsing
+- **Cloud APIs** (AWS, GitHub, Stripe) response handling
+- **Log Analysis** with multiple severity levels and timestamps
+- **Data Transformation** for analytics pipelines
+- **GenAI & ML** token counting and tool call parsing
+
+Each recipe includes:
+- **Context**: When and why you'd use this pattern
+- **Hints**: Gentle nudges if you're stuck
+- **Progress Tracking**: See what you've mastered
+
+### 🔌 API-First Design
+- Fetch JSON from any URL (public or private)
+- **Custom Headers**: Add Bearer tokens, API keys, whatever you need
+- Works just like Postman, but with `jq` superpowers built in
+
+### 🏆 Challenge Mode
+Think you know `jq`? Hide the solutions and test yourself:
+- **Git-diff style feedback**: See exactly what's different
+- **Track your progress**: Comes back to haunt you (or celebrate) later
+
+### 📖 Integrated Docs
+The [official jq manual](https://jqlang.org/manual/) loads right in the app. No more tab-switching during those late-night debugging sessions.
+
+---
 
 ## Quick Start
 
-1.  **Select a Recipe**: Browse the "Recipes" tab to find a use case like "Extract Error Logs".
-2.  **Experiment**: Click "Run" to see the output. Modify the query in the Playground to see how it changes.
-3.  **Challenge Yourself**: Toggle "Challenge Mode" to hide the query and try to reconstruct it from scratch!
+**Just want to jump in?**
 
-## Local Development
+1. **[Open the playground](https://luutuankiet.github.io/jq_crash_course/)**
+2. **Pick a recipe** from the Recipe Book (start with "Basics: Navigation & Extraction")
+3. **Click "Run"** to see it work
+4. **Modify the query** and watch the output change
+5. **Hit "Challenge Mode"** when you're feeling brave
 
-This project was built with React and Vite.
+---
 
-**Prerequisites:** [Node.js](https://nodejs.org/) (version 20+) installed.
+## Running Locally
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/luutuankiet/jq_crash_course.git
-    cd jq_crash_course
-    ```
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-3.  **Run the local development server:**
-    ```bash
-    npm run dev
-    ```
-    The application will be available at `http://localhost:5173`.
+Want to hack on this or run it offline?
 
-## Testing
+```bash
+# Clone it
+git clone https://github.com/luutuankiet/jq_crash_course.git
+cd jq_crash_course
 
-Run automated recipe tests to verify all 50+ recipes execute correctly:
+# Install dependencies (Node 20+ required)
+npm install
 
+# Start the dev server
+npm run dev
+```
+
+Open `http://localhost:5173` and you're off to the races.
+
+**Test all recipes:**
 ```bash
 npm run test
 ```
 
-This will test all recipes and report any errors.
+---
 
-## Deployment
+## Contributing Back
 
-This application is configured for continuous deployment to GitHub Pages. Any push to the `main` branch will automatically trigger a build and deployment workflow.
+This project is a contribution to the data engineering, analytics engineering, and developer communities. JSON is the lingua franca of modern data systems, and `jq` is one of the most powerful tools for working with it.
+
+If you find this useful:
+- **Star the repo** on [GitHub](https://github.com/luutuankiet/jq_crash_course)
+- **Share it** with colleagues fighting JSON battles
+- **Contribute recipes** for your favorite APIs or data sources
+- **File issues** if something breaks or could be better
+
+We're all in this together. Let's make JSON processing less painful for everyone.
+
+---
+
+## Tech Stack
+
+- **React + Vite** for the UI
+- **jq-web** for client-side `jq` execution (yes, it runs in your browser!)
+- **Tailwind CSS** for styling
+- **GitHub Pages** for hosting
+
+Zero backend. Zero tracking. Just you and your JSON.
+
+---
+
+## License & Credits
+
+Built with ❤️ by developers, for developers.
+
+Special thanks to the `jq` maintainers and the `jq-web` project for making this possible.
+
+---
+
+**Now go conquer some JSON.** 🚀

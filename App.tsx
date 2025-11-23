@@ -726,9 +726,16 @@ const App: React.FC = () => {
 
           {!isSidebarCollapsed && (
             <div className="p-4 text-xs text-gray-400 hidden md:block text-center border-t border-gray-100">
-              jq 1.8 Study App
+              <a
+                href="https://github.com/luutuankiet/jq_crash_course"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-jq-blue transition-colors"
+              >
+                📦 Source on GitHub
+              </a>
               <br />
-              <span className="opacity-75">Client-side processing</span>
+              <span className="opacity-75">Built for the data community</span>
             </div>
           )}
         </div>

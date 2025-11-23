@@ -93,7 +93,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-001-identity",
     title: "Identity: Output the Input",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "The most basic filter, `.` outputs the entire input JSON, unchanged.",
     narrative: "Let's start with the simplest possible operation. The `.` filter is the identity operator. It takes the input and produces it exactly as it was, with no modifications.",
     hint: "The query is simply `.`",
@@ -103,7 +103,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-002-basic-field-access",
     title: "Basic Field Access",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Extract the value of a specific key from an object using dot notation.",
     narrative: "Most of the time, you'll want to access a specific piece of data. Use the dot notation `.key` to access the value associated with that key in an object.",
     hint: "Use `.users` to get the array of users.",
@@ -113,7 +113,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-003-array-indexing",
     title: "Array Indexing",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Get a single element from an array by its zero-based index.",
     narrative: "To get a specific item from a list (an array), you use square brackets `[index]`. Remember that arrays are zero-indexed.",
     hint: "To get the first user, access the `users` array and then use index `[0]`.",
@@ -123,7 +123,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-004-nested-access",
     title: "Nested Field Access",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Chain field and index accessors to retrieve deeply nested data.",
     narrative: "Real-world data is often nested. You can chain dot and bracket accessors together to navigate deep into the JSON structure.",
     hint: "First get the first user with `.users[0]`, then get their name with `.name`.",
@@ -133,7 +133,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-005-array-iteration",
     title: "Array Iteration with .[]",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Use `[]` to turn an array into a stream of its individual elements.",
     narrative: "To perform an operation on *every* element in an array, you need to 'unwind' or 'explode' it. The `.[]` syntax iterates over an array.",
     hint: "`.users[]` will output each user object one by one.",
@@ -143,7 +143,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-006-pipe-operator",
     title: "The Pipe Operator |",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Chain multiple filters together using the `|` pipe operator.",
     narrative: "The pipe `|` is the most powerful feature in jq. It lets you take the output of one filter and use it as the input for the next.",
     hint: "First iterate with `.users[]`, then pipe `|` the result to `.name`.",
@@ -153,7 +153,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-010-length",
     title: "Get Length",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "`length` can be used to get the size of arrays, strings, and objects.",
     narrative: "The `length` function is versatile. When used on an array, it returns the number of elements. On a string, the number of characters.",
     hint: "Pipe the `users` array to the `length` function.",
@@ -163,7 +163,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-011-keys",
     title: "Get Object Keys",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "The `keys` function returns a sorted array of an object's keys.",
     narrative: "Sometimes you need to know what keys are available in an object before you process it. `keys` gives you a sorted array of all the key names.",
     hint: "Select the first user, then pipe it to `keys`.",
@@ -173,7 +173,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-060-array-slicing",
     title: "Array Slicing",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "Extract a portion of an array using the `[start:end]` syntax.",
     narrative: "You can select a sub-section of an array. The slice `[start:end]` includes the element at `start` and goes up to, but does not include, the element at `end`.",
     hint: "To get the 2nd and 3rd elements (indices 1 and 2), use `[1:3]`.",
@@ -183,7 +183,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-076-path",
     title: "Finding Paths with `path`",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "`path(filter)` outputs the paths to the values selected by the filter, not the values themselves.",
     narrative: "Sometimes you need to know *where* a piece of data is located, not just what it is. `path` gives you an array representing the path, e.g., `[\"users\", 0, \"name\"]`.",
     hint: "Find the path to any value that equals `\"admin\"`.",
@@ -193,7 +193,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-099-get-paths",
     title: "Get Paths of Values",
-    category: "1. Basics: Navigation & Extraction",
+    category: " Basics: Navigation & Extraction",
     description: "The `paths` function outputs all possible paths in a JSON document as arrays.",
     narrative: "While `path(filter)` finds the path to a specific value, `paths` simply lists all valid paths. This can be useful for understanding the structure of an unknown JSON document.",
     hint: "Pipe the input to `paths`.",
@@ -208,7 +208,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-007-object-construction",
     title: "Simple Object Construction",
-    category: "2. Basics: Construction & Output",
+    category: " Basics: Construction & Output",
     description: "Create a new JSON object with `{}` and custom keys.",
     narrative: "You're not limited to just extracting data; you can create new objects. The syntax `{ \"new_key\": .old.path }` creates a new object mapping.",
     hint: "Use curly braces `{}` to define the new object.",
@@ -218,7 +218,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-008-object-shorthand",
     title: "Object Construction Shorthand",
-    category: "2. Basics: Construction & Output",
+    category: " Basics: Construction & Output",
     description: "If the new key name is the same as the input field, you can use a shorthand.",
     narrative: "Instead of `{\"name\": .name, \"id\": .id}`, you can just write `{name, id}`.",
     hint: "Iterate the users, then pipe each to `{id, name}`.",
@@ -228,7 +228,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-009-array-construction",
     title: "Array Construction with []",
-    category: "2. Basics: Construction & Output",
+    category: " Basics: Construction & Output",
     description: "Collect a stream of values into a single array using `[]`.",
     narrative: "If you wrap a filter that produces a stream in square brackets `[...]`, it will collect all the outputs into a single array.",
     hint: "The expression `.users[] | .name` produces a stream of names. Wrap it in `[]`.",
@@ -238,7 +238,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-066-string-interpolation",
     title: "String Interpolation",
-    category: "2. Basics: Construction & Output",
+    category: " Basics: Construction & Output",
     description: "Construct strings with embedded JSON data using `\\(filter)`.",
     narrative: "Often the goal is to produce a human-readable string. You can embed the result of any jq filter directly into a string using the `\\(...)` syntax.",
     hint: "The string will be `\"User \\(.name) has ID \\(.id).\"`",
@@ -248,7 +248,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-080-conditional-object-fields",
     title: "Conditional Object Fields",
-    category: "2. Basics: Construction & Output",
+    category: " Basics: Construction & Output",
     description: "Construct an object, but only include certain key-value pairs if a condition is met.",
     narrative: "By wrapping a key-value pair in parentheses inside an `if` statement, you can conditionally include it using the `+` operator.",
     hint: "Use `+ (if .optional? then {opt_key: .optional} else {} end)`.",
@@ -263,7 +263,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-026-map",
     title: "Transforming Arrays with `map`",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "`map(filter)` applies a given filter to each element of an input array, returning a new array.",
     narrative: "When you want to transform every item in an array without changing the number of items, `map` is the right tool.",
     hint: "Use `map` to apply the transformation `{name, id}` to each user.",
@@ -273,7 +273,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-018-unique",
     title: "Get Unique Array Values",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "`unique` takes an array and returns a new sorted array with duplicates removed.",
     narrative: "To get a distinct list of values, such as all the unique roles users have, use `unique`.",
     hint: "First, create an array of all roles: `[.users[].roles[]]`. Then pipe it to `unique`.",
@@ -283,7 +283,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-019-sort",
     title: "Sorting an Array",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "`sort` takes an array of numbers or strings and returns a sorted array.",
     narrative: "The `sort` filter sorts an array in ascending order. If it's an array of strings, it sorts alphabetically.",
     hint: "Create an array of names `[.users[] | .name]` and pipe it to `sort`.",
@@ -293,7 +293,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-079-sort-by-multiple-keys",
     title: "Sort by Multiple Keys",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "To sort by multiple criteria, sort by the least important key first, then the next.",
     narrative: "jq's `sort` is stable. To sort by `region` then `level`, you sort by `level` first, then `region`.",
     hint: "Sort by msg, then sort by level.",
@@ -303,7 +303,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-068-flatten",
     title: "Flattening Nested Arrays",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "`flatten` takes an array of arrays and produces a single, flat array.",
     narrative: "Sometimes you end up with nested arrays. `flatten` will 'unpack' these nested arrays by one level.",
     hint: "Pipe the nested array to `flatten`.",
@@ -313,7 +313,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-068-join",
     title: "Joining Array Elements",
-    category: "3. Arrays & Iteration",
+    category: " Arrays & Iteration",
     description: "`join(separator)` combines an array of strings into a single string.",
     narrative: "The opposite of `split`. `join` is useful for creating formatted strings, like a comma-separated list of tags.",
     hint: "Pipe the array of roles to `join(\", \")`.",
@@ -328,7 +328,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-012-select-equality",
     title: "Filtering with `select`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "The `select()` function filters a stream, letting only items that match the condition pass through.",
     narrative: "`select()` is the primary way to filter data in jq. You provide it with a condition that evaluates to true or false.",
     hint: "Iterate the array, then pipe each object to `select()` with the condition inside.",
@@ -338,7 +338,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-013-select-numeric",
     title: "Filtering by Numeric Condition",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "Use `select` with numeric operators like `>` or `<=`.",
     narrative: "You can use any boolean expression inside `select`. This is useful for finding data that falls within a certain numeric range.",
     hint: "The condition is `.context.latency_ms >= 500`.",
@@ -348,7 +348,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-014-has",
     title: "Check if Key Exists with `has`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "`has(key)` returns true if the input object has the given key.",
     narrative: "Sometimes you need to find objects that contain an optional field. The `has()` function checks for the presence of a key.",
     hint: "We want to find the log entry that `has` the `latency_ms` key in its context.",
@@ -358,7 +358,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-016-boolean-logic",
     title: "Boolean Logic `and`/`or`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "Combine multiple conditions in `select` using `and` or `or`.",
     narrative: "Real-world filtering often requires multiple criteria. You can combine checks using `and` and `or`.",
     hint: "The condition is `(.level == \"ERROR\") and (.context.region == \"us-east-1\")`.",
@@ -368,7 +368,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-029-alternative-operator",
     title: "Default Values with `//`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "The `//` operator provides a default value if the left-hand side is `null` or `false`.",
     narrative: "Dealing with missing data is common. The `//` operator lets you gracefully handle this by substituting a default value.",
     hint: "Try to access `.context.service`, which is sometimes missing, and provide a default.",
@@ -378,7 +378,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-022-if-then-else",
     title: "Conditional Logic `if-then-else`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "Perform conditional logic using `if A then B else C end`.",
     narrative: "jq supports standard `if-then-else` expressions. This is powerful for transforming data conditionally.",
     hint: "Check `if (.roles | contains([\"admin\"])) then \"Admin User\" else \"Regular User\" end`.",
@@ -388,7 +388,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-067-any-all",
     title: "Boolean Aggregation `any`/`all`",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "`any` returns true if any item in a stream meets a condition. `all` returns true if all items meet it.",
     narrative: "These are useful for validating data. Does this user have *any* admin roles? Do *all* the items in this order have a price?",
     hint: "Check if `any` role is equal to `\"admin\"`.",
@@ -398,7 +398,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-061-type-checking",
     title: "Checking Data Types",
-    category: "4. Filtering & Logic",
+    category: " Filtering & Logic",
     description: "The `type` function returns the type of its input as a string (e.g., \"number\", \"string\", \"object\").",
     narrative: "When processing unpredictable data, it's good practice to check types before attempting operations that might fail.",
     hint: "Select elements where `type == \"number\"`.",
@@ -413,7 +413,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-020-del",
     title: "Deleting a Field",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "`del(.path)` removes a key-value pair from an object.",
     narrative: "Sometimes you want to remove sensitive or unnecessary data. The `del()` function removes a field.",
     hint: "Iterate the users and pipe each one to `del(.email)`.",
@@ -423,7 +423,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-021-update-assignment",
     title: "Update Assignment `|=`",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "The `|=` operator updates a field in place by applying a filter to it.",
     narrative: "Instead of just replacing a value, `|=` lets you take the current value, run a filter on it, and replace the original value with the result.",
     hint: "The path is `.users[0].name`. The filter to apply is `ascii_upcase`.",
@@ -433,7 +433,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-092-addition-merging",
     title: "Merging Objects",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "The `+` operator merges objects (right-biased).",
     narrative: "On objects, `+` performs a shallow merge. If a key exists in both, the value from the right-hand object is used.",
     hint: "Combine the objects with `+`.",
@@ -443,7 +443,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-094-deep-merging-objects",
     title: "Deep (Recursive) Merging",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "The `*` operator on objects performs a deep merge, recursively merging nested objects.",
     narrative: "Unlike `+`, the `*` operator will merge nested objects as well. This is what you usually want when merging configuration files.",
     hint: "Use `.[0] * .[1]` to merge the default and user configs.",
@@ -456,7 +456,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-065-diffing-objects",
     title: "Diffing Objects",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "The subtraction operator `-` on objects produces a diff, showing what has changed.",
     narrative: "If you subtract one object from another, jq will remove all key-value pairs from the first object that are also present in the second.",
     hint: "The query is `.[1] - .[0]`",
@@ -466,7 +466,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-027-to-entries",
     title: "Object to Array (`to_entries`)",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "`to_entries` converts an object into an array of `{key, value}` objects.",
     narrative: "Sometimes it's easier to process data as a list rather than an object, especially if you need to filter by key names.",
     hint: "Pipe the `meta` object to `to_entries`.",
@@ -476,7 +476,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-028-from-entries",
     title: "Array to Object (`from_entries`)",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "`from_entries` converts an array of `{key, value}` objects back into a single object.",
     narrative: "This is useful for pivoting data or reconstructing an object after filtering via `to_entries`.",
     hint: "This structure is already perfect for `from_entries`.",
@@ -486,7 +486,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-077-map-values",
     title: "Transform Object Values",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "`map_values(f)` runs a filter on every value of an object, returning a new object.",
     narrative: "This is a convenient way to apply a transformation to all values in an object without changing the keys.",
     hint: "Use `map_values(tostring)`.",
@@ -496,7 +496,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-100-get-set-path",
     title: "Get and Set by Path",
-    category: "5. Object Manipulation",
+    category: " Object Manipulation",
     description: "Use `getpath` and `setpath` to dynamically read or write to a location using a path array.",
     narrative: "This is the programmatic equivalent of dot notation, useful when paths are dynamic variables.",
     hint: "Define a path, then use `setpath` to change the value at that location.",
@@ -511,7 +511,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-059-multiplication-division",
     title: "Math: Basic Arithmetic",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Use `*`, `/`, and `%` (modulo) for basic arithmetic.",
     narrative: "Standard arithmetic operators are available for numeric calculations.",
     hint: "Calculate total price with `*`.",
@@ -521,7 +521,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-058-subtraction",
     title: "Math: Subtraction & Sets",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "The `-` operator subtracts numbers and calculates the set difference for arrays.",
     narrative: "The `-` operator is context-aware. On numbers, it subtracts. On arrays, it removes elements found in the second array from the first.",
     hint: "Calculate `.price - .discount` and `.all_permissions - .user_permissions`",
@@ -531,7 +531,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-083-handling-nulls-in-arithmetic",
     title: "Math: Handling Nulls",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Use `// 0` to substitute `0` for `null` before performing arithmetic.",
     narrative: "Math on `null` produces `null`. A common pattern is `(.field // 0)` to ensure you are always working with a number.",
     hint: "Calculate `(.price // 0) - (.discount // 0)`.",
@@ -541,7 +541,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-015-string-contains",
     title: "String: Contains",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "The `contains(substring)` function checks if a string contains another string.",
     narrative: "`contains` is useful for simple keyword searching within text fields.",
     hint: "Use `select` with the condition `.msg | contains(\"database\")`.",
@@ -551,7 +551,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-063-startswith-endswith",
     title: "String: Starts/Ends With",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Boolean functions to check if a string begins or ends with a specific substring.",
     narrative: "Perfect for filtering filenames or prefixes without complex regex.",
     hint: "Select files where the name `endswith(\".log\")`.",
@@ -561,7 +561,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-062-string-splitting",
     title: "String: Splitting",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "`split(separator)` splits a string into an array of strings.",
     narrative: "Useful for parsing structured strings like CSV lines or tags.",
     hint: "Pipe the string to `split(\",\")`.",
@@ -571,7 +571,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-064-regex-test",
     title: "Regex: Test",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "`test(regex)` returns `true` or `false` if the input string matches the regex.",
     narrative: "For complex string matching, use regular expressions within `test()`.",
     hint: "The regex for a gmail/outlook is `\"@(gmail|outlook)\\\\.com$\"`.",
@@ -581,7 +581,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-065-regex-capture",
     title: "Regex: Capture",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "`capture(regex)` returns an object of the named capture groups from a regex match.",
     narrative: "When you need to extract specific parts of a string (like a user and domain from an email).",
     hint: "The regex is `\"^(?<user>[^@]+)@(?<domain>.+)\"`.",
@@ -591,7 +591,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-081-base64-encoding",
     title: "Encoding: Base64",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Use `@base64` and `@base64d` to encode and decode strings.",
     narrative: "Common in Kubernetes Secrets and web APIs.",
     hint: "Pipe to `@base64` then `@base64d`.",
@@ -601,7 +601,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-082-uri-encoding",
     title: "Encoding: URI",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Use `@uri` to percent-encode a string for use in a URL.",
     narrative: "Crucial for safely building URLs with query parameters.",
     hint: "Pipe the string to `@uri`.",
@@ -611,7 +611,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-078-datetime-formatting",
     title: "Date/Time Formatting",
-    category: "6. Data Transformation",
+    category: " Data Transformation",
     description: "Format a UNIX timestamp into a human-readable string using `strftime`.",
     narrative: "After converting a numeric timestamp with `todate`, you can format it using `strftime` directives.",
     hint: "Convert with `todate`, then `strftime(\"%Y-%m-%d %H:%M:%S\")`.",
@@ -626,7 +626,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "foundational-017-add-values",
     title: "Summing with `add`",
-    category: "7. Aggregation & Summary",
+    category: " Aggregation & Summary",
     description: "`add` takes an array of numbers and returns their sum.",
     narrative: "A common aggregation task. Create an array of numbers, then pipe to `add`.",
     hint: "Create array `[.users[] | .id]`, then `add`.",
@@ -636,7 +636,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-024-group-by",
     title: "Grouping with `group_by`",
-    category: "7. Aggregation & Summary",
+    category: " Aggregation & Summary",
     description: "`group_by` groups array elements into sub-arrays based on a shared property.",
     narrative: "Collects objects with the same value for a key into new arrays.",
     hint: "Use `group_by(.context.region)`.",
@@ -646,7 +646,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-025-group-and-count",
     title: "Group By and Count",
-    category: "7. Aggregation & Summary",
+    category: " Aggregation & Summary",
     description: "Combine `group_by` with `map` to create a summary report.",
     narrative: "After grouping, map over the groups to count them using `length`.",
     hint: "After `group_by`, pipe to `map({region: .[0].context.region, count: length})`",
@@ -656,7 +656,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-095-reduce",
     title: "Advanced Aggregation with `reduce`",
-    category: "7. Aggregation & Summary",
+    category: " Aggregation & Summary",
     description: "`reduce` aggregates a stream of values into a single complex answer.",
     narrative: "More powerful than `add` or `group_by`, `reduce` lets you build any data structure from a stream of inputs.",
     hint: "Start with `{}`, iterate users, and build a map of ID to Name.",
@@ -671,7 +671,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-logs-069-filter-by-timestamp",
     title: "Logs: Filter by Timestamp",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Filter log entries that fall within a specific time window.",
     narrative: "Common task: select logs where timestamp is `>=` start and `<` end.",
     hint: "Use `select` with numeric comparison on `.ts`.",
@@ -681,7 +681,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-logs-070-log-level-counts",
     title: "Logs: Count by Level",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Create a report showing how many logs of each severity level exist.",
     narrative: "Use `group_by` on the `.level` field to summarize log noise.",
     hint: "`group_by(.level)` and `map` length.",
@@ -691,7 +691,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "aws-053-ec2-instance-ips",
     title: "AWS: Get EC2 IPs",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Navigate nested AWS CLI output to find public IPs.",
     narrative: "Drill down through `.Reservations` and `.Instances`.",
     hint: "Path: `.Reservations[].Instances[] | .PublicIpAddress`",
@@ -701,7 +701,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "aws-054-flatten-ec2-tags",
     title: "AWS: Flatten Tags",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Convert AWS `[{Key, Value}]` tags into a simple object.",
     narrative: "Use `map` to rename Key/Value to key/value, then `from_entries`.",
     hint: "Pipe `.Tags` to `map({key: .Key, value: .Value}) | from_entries`.",
@@ -711,7 +711,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "aws-055-find-instance-by-tag",
     title: "AWS: Find Instance by Tag",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Filter instances based on a specific tag value.",
     narrative: "Flatten the tags first, then use `select` to check the tag value.",
     hint: "Flatten tags, then check `.Env == \"prod\"`.",
@@ -721,7 +721,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "docker-058-parse-env-vars",
     title: "Docker: Parse Env Vars",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Convert `[\"KEY=VAL\"]` strings into a JSON object.",
     narrative: "Split each string by `=`, map to `{key, value}`, then `from_entries`.",
     hint: "`map(split(\"=\") | {key: .[0], value: .[1]}) | from_entries`",
@@ -731,7 +731,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "k8s-059-pod-status",
     title: "K8s: Get Pod Status",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Create a simple report of pod names and phases from kubectl output.",
     narrative: "Iterate `.items[]` and extract `.metadata.name` and `.status.phase`.",
     hint: "Construct `{name, status}` objects.",
@@ -741,7 +741,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "k8s-060-find-crashing-pods",
     title: "K8s: Find Crashing Pods",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Find pods with high restart counts.",
     narrative: "Inspect `status.containerStatuses` for high `restartCount`.",
     hint: "Select pods where `any` container has restarts > 5.",
@@ -751,7 +751,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-genai-074-token-cost",
     title: "GenAI: Calculate Token Cost",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Extract token usage and calculate estimated cost.",
     narrative: "LLMs are expensive! Calculate the cost by multiplying tokens by rate.",
     hint: "Multiply `.attributes[\"llm.usage.total_tokens\"] * 0.00003`.",
@@ -761,7 +761,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-genai-075-parse-tool-args",
     title: "GenAI: Parse Tool Arguments",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Extract and parse nested JSON strings in tool calls.",
     narrative: "The tool arguments are stored as a *JSON string*. Use `fromjson` to parse it.",
     hint: "Use `fromjson` on the `tool.args` attribute string.",
@@ -771,7 +771,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-097-env-var-export",
     title: "Generate .env File",
-    category: "8. Scenario: Cloud & DevOps",
+    category: " Scenario: Cloud & DevOps",
     description: "Convert a JSON object into `KEY=VALUE` format.",
     narrative: "Use `to_entries` and string interpolation to generate config files.",
     hint: "Format: `\"\\(.key)=\\(.value)\"`.",
@@ -786,7 +786,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-041-list-repo-names",
     title: "GitHub: List Names",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Extract just the `name` from a list of repos.",
     narrative: "Simple extraction from an array of objects.",
     hint: "Iterate and pipe to `.name`.",
@@ -796,7 +796,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-042-find-forked-repos",
     title: "GitHub: Find Forks",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Filter for forked repositories.",
     narrative: "Use `select` on the boolean `.fork` field.",
     hint: "Use `select(.fork == true)`.",
@@ -806,7 +806,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-043-count-stargazers",
     title: "GitHub: Star Count Report",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Create a simplified object showing each repository's name and its star count.",
     narrative: "We want to create a clean report. Iterate through the repos and for each one, construct a new object.",
     hint: "Iterate and pipe to `{name, stars: .stargazers_count}`.",
@@ -816,7 +816,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-044-sort-by-stars",
     title: "GitHub: Sort Repos by Stars",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Sort the list of repositories from most to least popular using `sort_by`.",
     narrative: "`sort_by` allows you to sort an array of objects based on a property. Pipe to `reverse` for descending.",
     hint: "`sort_by(.stargazers_count) | reverse`",
@@ -826,7 +826,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-045-list-languages",
     title: "GitHub: Get Unique Languages",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Compile a unique, sorted list of all programming languages used.",
     narrative: "Create an array of all languages, then use `unique` to get the distinct set.",
     hint: "Combine `[.[] | .language]` and `unique`.",
@@ -836,7 +836,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "github-046-find-issues-by-label",
     title: "GitHub: Find Issues by Label",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Find all issues that have a specific label, like 'bug'.",
     narrative: "The `labels` field is an array of objects. Use `any()` to check the label names.",
     hint: "Use `select(.labels | any(.name == \"bug\"))`.",
@@ -846,7 +846,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "stripe-048-list-charge-amounts",
     title: "Stripe: List Amounts",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Access the `data` array in a wrapper object.",
     narrative: "Drill into `.data[]` before processing items.",
     hint: "Access `.data[]`, then extract `.amount`.",
@@ -856,7 +856,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "stripe-049-successful-charges",
     title: "Stripe: Filter Successful Charges",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Filter the list of charges to find only those with a `status` of `succeeded`.",
     narrative: "Access the data array, iterate it, and then use `select`.",
     hint: "Use `select(.status == \"succeeded\")`.",
@@ -866,7 +866,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "stripe-050-normalize-currency",
     title: "Stripe: Normalize Currency",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Convert cents to dollars.",
     narrative: "Divide `.amount` by 100.",
     hint: "Calculate `.amount / 100`.",
@@ -876,7 +876,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "stripe-051-sum-by-currency",
     title: "Stripe: Sum Revenue by Currency",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Group charges by currency and then sum the total amount for each currency.",
     narrative: "First `group_by(.currency)`, then `map` to construct a summary object summing amounts.",
     hint: "Combine `group_by`, `map`, and `add`.",
@@ -886,7 +886,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "stripe-052-flatten-metadata",
     title: "Stripe: Flatten Metadata",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Merge nested `metadata` fields into the parent object.",
     narrative: "Use `+` to merge `.metadata` into `.`.",
     hint: "`. + .metadata | del(.metadata)`",
@@ -896,7 +896,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-geojson-071-feature-coordinates",
     title: "GeoJSON: Get Coordinates",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Extract coordinates from a FeatureCollection.",
     narrative: "Iterate `features` and access `geometry.coordinates`.",
     hint: "`.features[] | .geometry.coordinates`",
@@ -906,7 +906,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-geojson-072-feature-properties",
     title: "GeoJSON: Get Properties",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Extract the metadata (properties) associated with each feature.",
     narrative: "Each GeoJSON feature has a `properties` object containing metadata.",
     hint: "The path is `.features[] | .properties`.",
@@ -916,7 +916,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "real-world-bq-073-pivot-attributes",
     title: "BigQuery: Pivot Attributes",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Parse JSON string column and flatten it.",
     narrative: "Parse the string col with `fromjson`, then `from_entries`.",
     hint: "`fromjson | from_entries`",
@@ -926,7 +926,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-069-generate-sql",
     title: "Generate SQL Statements",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Format JSON data into SQL INSERT statements.",
     narrative: "Use string interpolation to create SQL queries from data.",
     hint: "Construct `INSERT INTO ... VALUES ...` string.",
@@ -936,7 +936,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-064-from-to-json",
     title: "Parsing JSON within JSON",
-    category: "9. Scenario: APIs & Data",
+    category: " Scenario: APIs & Data",
     description: "Use `fromjson` to parse a string field that contains JSON.",
     narrative: "Common when logs or DBs embed JSON as a string. Parse it to work with nested data.",
     hint: "Pipe `.custom_attributes` to `fromjson`.",
@@ -951,7 +951,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-023-variables",
     title: "Using Variables `as`",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Store a value in a variable with `as $name`.",
     narrative: "Useful for retaining values from a higher scope during iteration.",
     hint: "Store `.meta.total as $total` before iterating users.",
@@ -961,7 +961,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-067-arg-variables",
     title: "CLI Arguments (`--arg`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Pass values from shell to jq using `--arg name value`.",
     narrative: "Inject external variables (like environment names) into your query as `$name`.",
     hint: "Simulate passing `--arg role admin`.",
@@ -971,7 +971,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-097-cli-raw-output-flag",
     title: "Raw Output Flag (`-r`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "The `-r` flag outputs strings directly without JSON quotes.",
     narrative: "Essential for generating scripts or config files.",
     hint: "Requires `jq -r`.",
@@ -981,7 +981,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-098-cli-compact-output-flag",
     title: "Compact Output Flag (`-c`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "The `-c` flag prints each JSON output on a single line.",
     narrative: "Use this for NDJSON (newline delimited JSON) processing.",
     hint: "Requires `jq -c`.",
@@ -991,7 +991,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-096-cli-slurp-flag",
     title: "Slurp Flag (`-s`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "The `-s` flag reads a stream of JSON objects into a single array.",
     narrative: "Essential when processing log files where every line is a separate JSON object.",
     hint: "Requires `jq -s`.",
@@ -1001,7 +1001,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-030-error-suppression",
     title: "Error Suppression `?`",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Appending `?` prevents errors if the key/index doesn't exist.",
     narrative: "Vital for processing inconsistent data streams.",
     hint: "Use `.context.latency_ms?`.",
@@ -1011,7 +1011,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "intermediate-093-fromjson-safe",
     title: "Safe Parsing (`try-catch`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Use `try-catch` to handle strings that might not be valid JSON.",
     narrative: "Prevents scripts from crashing on bad data.",
     hint: "Use `try fromjson catch .`.",
@@ -1021,7 +1021,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-061-recursive-descent",
     title: "Recursive Descent `..`",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Recursively outputs every value in the JSON structure.",
     narrative: "Use this to find a key anywhere in a deep hierarchy.",
     hint: "`.. | .IPAddress?` finds IPs anywhere.",
@@ -1031,7 +1031,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-066-walk",
     title: "Recursive Modification (`walk`)",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Recursively applies a filter to every value in the input.",
     narrative: "Perfect for redacting sensitive keys anywhere in a document.",
     hint: "Use `walk` to redact API keys.",
@@ -1041,7 +1041,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-062-defining-functions",
     title: "Defining Functions `def`",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Define reusable functions using `def name: ...;`.",
     narrative: "Modularize complex logic.",
     hint: "Define `def to_dollars: . / 100;`.",
@@ -1051,7 +1051,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-084-slurpfile-join",
     title: "Joining Two Data Sources",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "Using `--slurpfile`, load a lookup table and enrich another data source.",
     narrative: "Load a secondary JSON file as a variable to perform joins.",
     hint: "Requires CLI: `jq --slurpfile users users.json`.",
@@ -1064,7 +1064,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-085-comments",
     title: "Using Comments",
-    category: "10. Advanced Concepts & CLI",
+    category: " Advanced Concepts & CLI",
     description: "jq filters can be commented using `#`.",
     narrative: "Anything from a `#` to the end of the line is ignored by jq.",
     hint: "Add a comment before the `select`.",
@@ -1079,7 +1079,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-086-word-count",
     title: "Word Count",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Count occurrences of each word in a text.",
     narrative: "Split text, group by word, and count.",
     hint: "Split by space, group_by `.`, map count.",
@@ -1089,7 +1089,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-089-fizzbuzz",
     title: "FizzBuzz",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "The classic FizzBuzz test.",
     narrative: "Showcases `range`, modulo `%`, and `if/elif`.",
     hint: "Generate range, then check modulo 15, 3, 5.",
@@ -1099,7 +1099,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-090-fibonacci",
     title: "Fibonacci Sequence",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Generate Fibonacci numbers using `recurse`.",
     narrative: "Demonstrates generating sequences recursively.",
     hint: "Use `recurse` on a pair `[0,1]`.",
@@ -1109,7 +1109,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-087-ascii-bar-chart",
     title: "ASCII Bar Chart",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Generate a visual chart using string multiplication.",
     narrative: "Multiplying a string repeats it.",
     hint: "Output `\"=\" * .value`.",
@@ -1119,7 +1119,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-088-permutations",
     title: "Array Permutations",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Generate all possible orderings of an array's elements.",
     narrative: "A recursive jq function can generate all permutations.",
     hint: "This requires a recursive function definition.",
@@ -1129,7 +1129,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "fun-091-pascals-triangle",
     title: "Pascal's Triangle",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Generate N rows of Pascal's Triangle.",
     narrative: "Another algorithmic example showing how `recurse` can be used to build up a structure row by row.",
     hint: "The next row is generated by adding pairs of numbers from the current row.",
@@ -1139,7 +1139,7 @@ export const RECIPES: Recipe[] = [
   {
     id: "advanced-094-transpose-matrix",
     title: "Transposing a Matrix",
-    category: "11. Algorithms & Fun",
+    category: " Algorithms & Fun",
     description: "Transpose a matrix (swap its rows and columns).",
     narrative: "Showcases complex data manipulation using `range` and indexing.",
     hint: "Requires `range`, `map`, and indexing.",
