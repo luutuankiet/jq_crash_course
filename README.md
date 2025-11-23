@@ -4,8 +4,7 @@
 
 *Made with ❤️ using Google AI Studio and Antigravity  [https://antigravity.google](https://antigravity.google)*
 
-<video src="https://raw.githubusercontent.com/luutuankiet/jq_crash_course/main/assets/demo.mp4" controls autoplay loop muted width="100%"></video>
-
+<video src="https://github.com/user-attachments/assets/05f5089e-8bb5-479d-b88c-0b4684912c0a" controls autoplay loop muted width="100%"></video>
 **[→ Try it live](https://luutuankiet.github.io/jq_crash_course/)**
 
 ---
