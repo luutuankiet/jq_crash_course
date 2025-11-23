@@ -1,0 +1,5 @@
+{
+  "name": "jq Master",
+  "description": "An interactive learning platform for the jq command-line JSON processor, featuring the manual, quizzes, visualizers, and AI assistance.",
+  "requestFramePermissions": []
+}
