@@ -1,5 +1,15 @@
 import { Recipe } from "./types";
-import { SAMPLE_JSON, DOCKER_INSPECT_JSON, LOOKER_DASHBOARD_JSON, GENAI_TRACE_JSON, STRIPE_INVOICE_JSON, BQ_JSON_EXPORT } from "./constants";
+import {
+  SAMPLE_JSON,
+  DOCKER_INSPECT_JSON,
+  LOOKER_DASHBOARD_JSON,
+  GENAI_TRACE_JSON,
+  STRIPE_INVOICE_JSON,
+  BQ_JSON_EXPORT,
+  OPENAPI_FULL_SAMPLE,
+  OPENAPI_SAMPLE,
+  DBT_MANIFEST_SAMPLE
+} from "./constants";
 
 const API_DATA = {
   "users": [
@@ -84,8 +94,51 @@ const GEOJSON_FEATURE_JSON = {
   ]
 };
 
+const MYSTERY_PAYLOAD = {
+  "api_version": "v1.0",           // string
+  "retry_count": 3,                // number
+  "is_active": true,               // boolean
+  "deprecated_at": null,           // null
+  "features": ["logging", "auth"], // array
+  "meta": {                        // object
+    "region": "us-east-1",
+    "shard": "A"
+  }
+};
 
-const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
+const QUESTION_BANK_SAMPLE = [
+  {
+    "title": "Basic Select",
+    "category": " Basics: Navigation", // Note the leading space!
+    "description": "Select the user name.",
+    "narrative": "Use dot notation.",
+    "hint": "", // Empty hint (QA issue)
+    "input": "{\"name\": \"Gui\"}",
+    "query": ".name"
+  },
+  {
+    "title": "Complex Filter",
+    "category": "Filtering & Logic",
+    "description": "Select users with admin role and active status.",
+    "narrative": "Combine conditions with 'and'.",
+    "hint": "select(.role=='admin' and .active)",
+    "input": "[...]",
+    "query": "map(select(.role==\"admin\" and .active==true))"
+  },
+  {
+    "title": "Map IDs",
+    "category": "Basics: Navigation", // No leading space (Inconsistent!)
+    "description": "Get all IDs.",
+    "narrative": "Map over the array.",
+    "hint": "map(.id)",
+    "input": "[...]",
+    "query": "map(.id)"
+  }
+];
+
+
+
+export const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   // ==========================================
   // 1. BASICS: NAVIGATION & EXTRACTION
   // Focus: Selecting, drilling down, and inspecting structure
@@ -720,7 +773,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   // ==========================================
   {
     title: "GitHub: List Names",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: From a GitHub API response listing repositories, how would you extract just the name of each repository?",
     narrative: "Simple extraction from an array of objects.",
     hint: "Iterate and pipe to `.name`.",
@@ -729,7 +782,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GitHub: Find Forks",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you filter a list of GitHub repositories to find only the ones that are forks?",
     narrative: "Use `select` on the boolean `.fork` field.",
     hint: "Use `select(.fork == true)`.",
@@ -738,7 +791,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GitHub: Star Count Report",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you transform a list of GitHub repositories into a simplified list of objects, where each object contains only the repo's name and its star count (renamed to `stars`)?",
     narrative: "We want to create a clean report. Iterate through the repos and for each one, construct a new object.",
     hint: "Iterate and pipe to `{name, stars: .stargazers_count}`.",
@@ -747,7 +800,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GitHub: Sort Repos by Stars",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you sort a list of GitHub repositories by their star count in descending order (most popular first)?",
     narrative: "`sort_by` allows you to sort an array of objects based on a property. Pipe to `reverse` for descending.",
     hint: "`sort_by(.stargazers_count) | reverse`",
@@ -756,7 +809,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GitHub: Get Unique Languages",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you scan a list of repositories and produce a single, sorted array of all unique programming languages used across them?",
     narrative: "Create an array of all languages, then use `unique` to get the distinct set.",
     hint: "Combine `[.[] | .language]` and `unique`.",
@@ -765,7 +818,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GitHub: Find Issues by Label",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you filter a list of GitHub issues to find only those that have the 'bug' label?",
     narrative: "The `labels` field is an array of objects. Use `any()` to check the label names.",
     hint: "Use `select(.labels | any(.name == \"bug\"))`.",
@@ -774,7 +827,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Stripe: List Amounts",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: Given a paginated API response from Stripe, how would you extract the `amount` from each charge object within the `data` array?",
     narrative: "Drill into `.data[]` before processing items.",
     hint: "Access `.data[]`, then extract `.amount`.",
@@ -783,7 +836,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Stripe: Filter Successful Charges",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you filter a list of Stripe charges to find only the ones with a `status` of 'succeeded'?",
     narrative: "Access the data array, iterate it, and then use `select`.",
     hint: "Use `select(.status == \"succeeded\")`.",
@@ -792,7 +845,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Stripe: Normalize Currency",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: Given that Stripe amounts are in cents, how would you convert the amount for each charge into dollars by dividing by 100?",
     narrative: "Divide `.amount` by 100.",
     hint: "Calculate `.amount / 100`.",
@@ -801,7 +854,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Stripe: Sum Revenue by Currency",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you calculate the total revenue (sum of amounts) for each currency (e.g., 'usd', 'eur') from a list of charges?",
     narrative: "First `group_by(.currency)`, then `map` to construct a summary object summing amounts.",
     hint: "Combine `group_by`, `map`, and `add`.",
@@ -810,7 +863,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Stripe: Flatten Metadata",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you take a Stripe charge object and merge the fields from its nested `metadata` object into the top level of the charge object?",
     narrative: "Use `+` to merge `.metadata` into `.`.",
     hint: "`. + .metadata | del(.metadata)`",
@@ -819,7 +872,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GeoJSON: Get Coordinates",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you extract a list of all coordinate pairs from a GeoJSON FeatureCollection object?",
     narrative: "Iterate `features` and access `geometry.coordinates`.",
     hint: "`.features[] | .geometry.coordinates`",
@@ -828,7 +881,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "GeoJSON: Get Properties",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: From a GeoJSON FeatureCollection, how would you extract the `properties` object (containing metadata like the name) for each feature?",
     narrative: "Each GeoJSON feature has a `properties` object containing metadata.",
     hint: "The path is `.features[] | .properties`.",
@@ -837,7 +890,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "BigQuery: Pivot Attributes",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: From a BigQuery export where custom attributes are stored in a single JSON string, how would you parse that string and flatten its contents into the parent object?",
     narrative: "Parse the string col with `fromjson`, then `from_entries`.",
     hint: "`fromjson | from_entries`",
@@ -846,7 +899,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Generate SQL Statements",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you convert an array of user objects into a series of SQL `INSERT` statements?",
     narrative: "Use string interpolation to create SQL queries from data.",
     hint: "Construct `INSERT INTO ... VALUES ...` string.",
@@ -855,7 +908,7 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
   },
   {
     title: "Parsing JSON within JSON",
-    category: " Scenario: APIs & Data",
+    category: "Scenario: APIs & Data",
     description: "Problem: How would you parse a field that is a string, but its content is itself a valid JSON object, turning it into a queryable object?",
     narrative: "Common when logs or DBs embed JSON as a string. Parse it to work with nested data.",
     hint: "Pipe `.custom_attributes` to `fromjson`.",
@@ -1045,7 +1098,309 @@ const RECIPE_DEFINITIONS: Omit<Recipe, "id">[] = [
     hint: "Requires `range`, `map`, and indexing.",
     input: JSON.stringify([[1, 2, 3], [4, 5, 6]], null, 2),
     query: "if . == [] then [] else . as $in | (map(length) | max) as $max | range($max) | map(range($in | length) | $in[.] | .[.]) end"
+  },
+
+
+  // OPENAPI
+  {
+    title: "OpenAPI: Count Definitions",
+    category: "Scenario: APIs & Data",
+    description: "Problem: I want to know how complex the data model is. How many objects are defined in the 'definitions' section?",
+    narrative: "The `length` function is polymorphic. When applied to an object, it counts the keys. This is the quickest way to get a high-level metric of API complexity.",
+    hint: "Navigate to .definitions and apply length.",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: ".definitions | length"
+  },
+
+  {
+    title: "OpenAPI: List All Paths",
+    category: "Scenario: APIs & Data",
+    description: "Problem: Generate a simple text list of all URL paths available in this API.",
+    narrative: "The `.paths` node is an Object where the keys are the URLs. We use `keys` to extract them as an array, then `.[]` to flatten them into a stream of strings.",
+    hint: "Use .paths | keys",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: ".paths | keys[]"
+  },
+
+  // ---------------------------------------------------------
+  // LEVEL 2: INTERMEDIATE (Mapping & Flattening)
+  // ---------------------------------------------------------
+
+  {
+    title: "OpenAPI: Extract Unique Tags",
+    category: "Scenario: APIs & Data",
+    description: "Problem: I want to see a unique list of all 'tags' (categories) used across all endpoints to understand the business domains.",
+    narrative: "This requires digging deep. We iterate into `.paths`, then into the methods, then grab the `.tags` array. Because tags are arrays themselves, we get a list of lists. We must `flatten` it and then use `unique` to remove duplicates.",
+    hint: "Path: .paths[][].tags | unique",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: "[.paths[][].tags] | flatten | unique"
+  },
+
+  {
+    title: "OpenAPI: Find Deprecated Endpoints",
+    category: "Scenario: APIs & Data",
+    description: "Problem: We are auditing the API. Find which specific operations (Method + Path) are marked as 'deprecated'.",
+    narrative: "We use `to_entries` to turn the paths object into a list we can iterate over. Then we filter (`select`) based on the boolean flag inside the method object.",
+    hint: "Use select(.value[].deprecated == true)",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: ".paths | to_entries[] | select(.value[].deprecated == true) | .key"
+  },
+
+  // ---------------------------------------------------------
+  // LEVEL 3: ADVANCED (Reshaping & Quality Checks)
+  // ---------------------------------------------------------
+
+  {
+    title: "OpenAPI: Prefix All Paths (Migration)",
+    category: "Scenario: APIs & Data",
+    description: "Problem: We are moving to a new gateway and need to prepend '/v1' to every path key in the JSON.",
+    narrative: "This is the perfect use case for `with_entries`. It allows us to pick up the Key/Value pair, modify the Key string (concatenation), and put it back down. `jq` handles rebuilding the object automatically.",
+    hint: "Use with_entries(.key |= \"/v1\" + .)",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: ".paths | with_entries(.key |= \"/v1\" + .)"
+  },
+
+  {
+    title: "OpenAPI: Audit Missing Descriptions",
+    category: "Scenario: APIs & Data",
+    description: "Problem: QA Check - Identify any endpoint (Method + URL) that is missing a 'description' field.",
+    narrative: "This combines variable capture with filtering. We store the path name in `$path`, dive into the method, and check if `.description` is null (or missing). We then format the output to tell us exactly where the documentation gap is.",
+    hint: "Capture .key as $path, then select(not .description)",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: ".paths | to_entries[] | .key as $path | .value | to_entries[] | select(.value.description == null) | \"MISSING DOCS: \" + .key + \" \" + \($path)"
+  },
+
+  {
+    title: "OpenAPI: Stats by HTTP Method",
+    category: "Scenario: APIs & Data",
+    description: "Problem: Count how many GETs, POSTs, and DELETEs exist in total across the API.",
+    narrative: "This is a Map-Reduce operation. 1. Extract all method keys. 2. `group_by` the method name. 3. `map` the resulting groups to an object showing the name and the `length` (count) of the group.",
+    hint: "Extract keys, group_by(.), then map count.",
+    input: JSON.stringify(OPENAPI_FULL_SAMPLE, null, 2),
+    query: "[.paths[] | keys[]] | group_by(.) | map({method: .[0], count: length})"
+  },
+
+  {
+    title: "OpenAPI: Reduce for LLM Context",
+    category: "Scenario: APIs & Data",
+    description: "Problem: This OpenAPI spec is too large for my LLM's context window. How can I strip out the verbose 'definitions' and 'responses' to save tokens, keeping only the paths?",
+    narrative: "When feeding code to LLMs, token economy is key. 'definitions' (schemas) and 'responses' often take up 60% of the file but aren't always needed for an agent to simply know *how* to call an endpoint. The `del()` function is the cleanest way to chop off branches of the JSON tree.",
+    hint: "Use the pipe | to chain multiple del() commands.",
+    input: JSON.stringify(OPENAPI_SAMPLE, null, 2),
+    query: "del(.definitions) | del(.paths[][].responses)"
+  },
+
+  // Recipe 2: Filtering by Key (The Filter)
+  {
+    title: "OpenAPI: Find Specific Endpoints",
+    category: "Scenario: APIs & Data",
+    description: "Problem: I only care about endpoints related to 'git'. How can I filter the paths object to show only keys containing that string?",
+    narrative: "This is a classic 'Dictionary Filter'. Because `.paths` is an Object (not an Array), we can't just run `select`. We must use `with_entries` to expose the Key and Value, run our logic on the `.key`, and then `jq` automatically rebuilds the object for us.",
+    hint: "Use with_entries(select(.key | contains(...)))",
+    input: JSON.stringify(OPENAPI_SAMPLE, null, 2),
+    query: ".paths | with_entries(select(.key | contains(\"git\")))"
+  },
+
+  // Recipe 3: Generating a Summary Map (The Surveyor)
+  {
+    title: "OpenAPI: Map Endpoints to Methods",
+    category: "Scenario: APIs & Data",
+    description: "Problem: I need a flat list of every URL and Method (GET/POST) to give my agent a 'Table of Contents' of this API.",
+    narrative: "This requires deep iteration. We must loop through the paths, capture the URL (the key) as a variable `$path`, then dive deeper to find the method names. Finally, we construct a string using string interpolation.",
+    hint: "Use .key as $path to save the URL before diving deeper.",
+    input: JSON.stringify(OPENAPI_SAMPLE, null, 2),
+    query: ".paths | to_entries[] | .key as $path | .value | to_entries[] | \"[\(.key)] \($path)\""
+  },
+  {
+    title: "Schema Discovery: Root Data Types",
+    category: "Scenario: APIs & Data",
+    description: "Problem: I have an unknown JSON document. I want to inspect the root keys and identify the data type of each value (e.g., is it a number, a null, or a nested object?).",
+    narrative: "When exploring new data, visual inspection isn't enough. The built-in `type` function definitively tells you if a value is a `string`, `number`, `boolean`, `null`, `array`, or `object`. By combining this with `to_entries`, we can generate a clean 'Field Name' vs 'Data Type' report.",
+    hint: "Pipe the value into the type function: (.value | type)",
+    input: JSON.stringify(MYSTERY_PAYLOAD, null, 2),
+    query: "to_entries | map({ key: .key, value: (.value | type) }) | from_entries"
+  },
+
+  // ==========================================
+  // dbt samples
+  // ==========================================
+
+  // 1. PROJECT FILTERING (Your requested Use Case)
+  {
+    title: "dbt: Filter Models by Package Allowlist",
+    category: "Filtering & Logic",
+    description: "Problem: I have a massive manifest, but I only care about models from specific packages (e.g., 'finance' and 'core'). Filter the nodes to return only those models.",
+    narrative: "We use your `$ALLOW_LIST` technique here. Because `.nodes` is an object, we pipe it to `.[]` to turn it into a stream of objects before selecting. This mimics SQL's `WHERE package_name IN (...)`.",
+    hint: "Define $PKG_LIST inside the query, then select(.package_name | IN($PKG_LIST[])).",
+    input: JSON.stringify(DBT_MANIFEST_SAMPLE, null, 2),
+    query: "[\"finance\", \"core\"] as $PKG_LIST | [.nodes[] | select(.resource_type == \"model\") | select(.package_name | IN($PKG_LIST[])) | .name]"
+  },
+
+  // 2. CONFIGURATION AUDIT
+  {
+    title: "dbt: Find Incremental Models",
+    category: "Filtering & Logic",
+    description: "Problem: Optimization Check - List all models that are configured with the 'incremental' materialization strategy.",
+    narrative: "dbt configurations are nested deep inside the `.config` object. We filter for `resource_type == 'model'` first (to ignore tests/seeds), then check the materialization key.",
+    hint: "Path: .config.materialized",
+    input: JSON.stringify(DBT_MANIFEST_SAMPLE, null, 2),
+    query: "[.nodes[] | select(.resource_type == \"model\" and .config.materialized == \"incremental\") | .name]"
+  },
+
+  // 3. TAG SEARCH
+  {
+    title: "dbt: Models by Tag",
+    category: "Arrays & Iteration",
+    description: "Problem: Find all models tagged with 'pii' (Personally Identifiable Information) for a security audit.",
+    narrative: "Tags in dbt are arrays of strings. To check if a specific string exists in that array, we can use the `index` function (which returns a number if found) or `contains`. `index` is usually safer for exact matches.",
+    hint: "select(.tags | index(\"pii\"))",
+    input: JSON.stringify(DBT_MANIFEST_SAMPLE, null, 2),
+    query: "[.nodes[] | select(.tags | index(\"pii\")) | .name]"
+  },
+
+  // 4. QUALITY CONTROL (Missing Docs)
+  {
+    title: "dbt: Find Undocumented Models",
+    category: "Scenario: APIs & Data",
+    description: "Problem: CI/CD Gate - Identify any model that has a null or empty description field.",
+    narrative: "Documentation is crucial. We filter for models where the description is either `null` OR an empty string (length == 0). This output can be fed into a CI pipeline to fail a build.",
+    hint: "select(.description == null)",
+    input: JSON.stringify(DBT_MANIFEST_SAMPLE, null, 2),
+    query: ".nodes[] | select(.resource_type == \"model\") | select(.description == null or .description == \"\") | { name: .name, package: .package_name }"
+  },
+
+  // 5. LINEAGE TRACING (Advanced)
+  {
+    title: "dbt: Find Downstream Dependencies",
+    category: "Advanced Concepts & CLI",
+    description: "Problem: I am changing the 'stg_payments' model. I need to find which other models depend on it to warn those teams.",
+    narrative: "This is a reverse-search. We look inside the `.depends_on.nodes` array of *every* node to see if our target model is listed there. Note that we search for the full unique ID (`model.finance.stg_payments`).",
+    hint: "select(.depends_on.nodes[] | contains(\"stg_payments\"))",
+    input: JSON.stringify(DBT_MANIFEST_SAMPLE, null, 2),
+    query: "[.nodes[] | select(.depends_on.nodes[]? | contains(\"model.finance.stg_payments\")) | .name]"
+  },
+
+// ==========================================
+// META-MANAGEMENT for the question bank
+// ==========================================
+
+// ---------------------------------------------------------
+// ROLE: THE LIBRARIAN (Inventory & Search)
+// ---------------------------------------------------------
+
+{
+    title: "Meta: List Unique Categories",
+    category: "Aggregation & Summary",
+    description: "Problem: My categories are messy. How do I get a simple, deduplicated list of all category names currently in use?",
+    narrative: "We extract the `.category` field from every item using `map`, and then pipe that list to `unique`. This sorts them and removes duplicates, instantly revealing typos (like ' Basics' vs 'Basics').",
+    hint: "map(.category) | unique",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(.category) | unique"
+  },
+
+  {
+    title: "Meta: Search by Keyword",
+    category: "Filtering & Logic",
+    description: "Problem: I need to find all questions that mention 'admin' in their description.",
+    narrative: "This is a standard search filter. We iterate through the array using `map` + `select`. Inside the select, we check if the description field `contains` our target string.",
+    hint: "map(select(.description | contains(\"admin\")))",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(select(.description | contains(\"admin\")))"
+  },
+
+  {
+    title: "Meta: Count Questions by Category",
+    category: "Aggregation & Summary",
+    description: "Problem: How many questions do I have in each category?",
+    narrative: "This is the most common aggregation pattern. 1. `group_by` the field. 2. `map` the groups to a new object containing the name (from the first item `.[0]`) and the count (`length`).",
+    hint: "group_by(.category) | map({cat: .[0].category, count: length})",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "group_by(.category) | map({category: .[0].category, count: length})"
+  },
+
+  // ---------------------------------------------------------
+  // ROLE: THE JANITOR (QA & Cleaning)
+  // ---------------------------------------------------------
+
+  {
+    title: "Meta: Find Incomplete Questions",
+    category: "Filtering & Logic",
+    description: "Problem: QA Check - Find any question that is missing a 'hint' (i.e., the hint is null or an empty string).",
+    narrative: "We use boolean logic inside `select`. We want items where `.hint` is null OR where its length is 0. This helps maintain the quality of your learning app.",
+    hint: "select(.hint == null or .hint == \"\")",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(select(.hint == null or .hint == \"\"))"
+  },
+
+  {
+    title: "Meta: Trim Category Whitespace",
+    category: "Data Transformation",
+    description: "Problem: Some categories have leading spaces (e.g., ' Basics'). I need to clean this up across the entire file.",
+    narrative: "We use the Update Operator `|=` to modify the `.category` field in place. `ltrimstr(\" \")` removes the leading space. This ensures ' Basics' becomes 'Basics' so they group correctly.",
+    hint: "map(.category |= ltrimstr(\" \"))",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(.category |= ltrimstr(\" \"))"
+  },
+
+  {
+    title: "Meta: Validate Query Syntax",
+    category: "Filtering & Logic",
+    description: "Problem: Sanity Check - Ensure no question has a query that is accidentally empty.",
+    narrative: "A missing query breaks the app. We verify that the `query` field exists and has content. We can also check if the `input` field is a string.",
+    hint: "select(.query | length > 0)",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(select(.query == null or (.query | length) == 0))"
+  },
+
+  // ---------------------------------------------------------
+  // ROLE: THE PUBLISHER (Formatting & Export)
+  // ---------------------------------------------------------
+
+  {
+    title: "Meta: Generate Markdown Checklist",
+    category: "Data Transformation",
+    description: "Problem: I want to copy-paste a To-Do list of all question titles into a GitHub issue.",
+    narrative: "We are transforming objects into strings. We use string interpolation `\"\(...)\"` to insert the title into a Markdown checklist format `- [ ] Title`.",
+    hint: "map(\"- [ ] \\(.title)\")",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(\"- [ ] \\(.title)\") | .[]"
+  },
+
+  {
+    title: "Meta: Export Minimal Dataset",
+    category: "Object Manipulation",
+    description: "Problem: I need a lightweight version of the file for the mobile app. Remove the 'narrative' and 'input' fields to save space.",
+    narrative: "We can construct a new object `{}` for every item, explicitly selecting only the fields we want to keep. This is often safer than `del()` when you want a strict schema output.",
+    hint: "map({ title: .title, query: .query })",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map({ title: .title, category: .category, query: .query })"
+  },
+
+  // ---------------------------------------------------------
+  // ROLE: THE DATA SCIENTIST (Enrichment)
+  // ---------------------------------------------------------
+
+  {
+    title: "Meta: Auto-Tag Complexity",
+    category: "Filtering & Logic",
+    description: "Problem: I want to automatically label questions as 'Advanced' if their query string is longer than 20 characters.",
+    narrative: "We can add a new field to every object using `+`. We use an `if-then-else` statement to determine the value of this new field based on the length of the query.",
+    hint: "map(. + { complexity: (if ... then ... else ... end) })",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(. + { complexity: (if (.query | length) > 20 then \"Advanced\" else \"Basic\" end) })"
+  },
+
+  {
+    title: "Meta: Verify JSON Structure",
+    category: "Basics: Navigation & Extraction",
+    description: "Problem: Ensure that every item in the array is actually an object (and not a random string or number that got pasted in).",
+    narrative: "The `type` function is your best friend for validation. We iterate through the array and select any item where the type is NOT 'object'. If this returns anything, your data is corrupt.",
+    hint: "map(select(type != \"object\"))",
+    input: JSON.stringify(QUESTION_BANK_SAMPLE, null, 2),
+    query: "map(select(type != \"object\"))"
   }
+
+
 ];
 
 export const RECIPES: Recipe[] = RECIPE_DEFINITIONS.map((recipe, index) => ({
