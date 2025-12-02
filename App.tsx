@@ -75,7 +75,7 @@ const PlaygroundView: React.FC<PlaygroundProps> = ({
   const [query, setQuery] = useState(initialQuery || ".");
   const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [urlInput, setUrlInput] = useState("https://api.github.com/repos/jqlang/jq/commits?per_page=5");
+  const [urlInput, setUrlInput] = useState("https://raw.githubusercontent.com/luutuankiet/jq_crash_course/refs/heads/main/compiled-questions.json");
   const [errorMsg, setErrorMsg] = useState("");
   const [isJqReady, setIsJqReady] = useState(false);
   const [wrapInput, setWrapInput] = useState(false);
