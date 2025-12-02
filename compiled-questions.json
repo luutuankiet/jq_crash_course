@@ -1,0 +1,1136 @@
+[
+  {
+    "title": "Identity: Output the Input",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you output the entire input JSON document without any changes?",
+    "narrative": "Let's start with the simplest possible operation. The `.` filter is the identity operator. It takes the input and produces it exactly as it was, with no modifications.",
+    "hint": "The query is simply `.`",
+    "input": "{\n  \"message\": \"Hello, jq!\"\n}",
+    "query": "."
+  },
+  {
+    "title": "Basic Field Access",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you access the value of the `users` key from the top-level object?",
+    "narrative": "Most of the time, you'll want to access a specific piece of data. Use the dot notation `.key` to access the value associated with that key in an object.",
+    "hint": "Use `.users` to get the array of users.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users"
+  },
+  {
+    "title": "Array Indexing",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you retrieve only the first element from the `users` array?",
+    "narrative": "To get a specific item from a list (an array), you use square brackets `[index]`. Remember that arrays are zero-indexed.",
+    "hint": "To get the first user, access the `users` array and then use index `[0]`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[0]"
+  },
+  {
+    "title": "Nested Field Access",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you extract the `name` of the first user in the `users` array?",
+    "narrative": "Real-world data is often nested. You can chain dot and bracket accessors together to navigate deep into the JSON structure.",
+    "hint": "First get the first user with `.users[0]`, then get their name with `.name`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[0].name"
+  },
+  {
+    "title": "Array Iteration with .[]",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you take an array of users and output each user object as a separate item in a stream?",
+    "narrative": "To perform an operation on *every* element in an array, you need to 'unwind' or 'explode' it. The `.[]` syntax iterates over an array.",
+    "hint": "`.users[]` will output each user object one by one.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[]"
+  },
+  {
+    "title": "The Pipe Operator |",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you produce a stream of just the `name` for each user in the `users` array?",
+    "narrative": "The pipe `|` is the most powerful feature in jq. It lets you take the output of one filter and use it as the input for the next.",
+    "hint": "First iterate with `.users[]`, then pipe `|` the result to `.name`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[] | .name"
+  },
+  {
+    "title": "Get Length",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you find the number of users in the array and the character length of the first user's name?",
+    "narrative": "The `length` function is versatile. When used on an array, it returns the number of elements. On a string, the number of characters.",
+    "hint": "Pipe the `users` array to the `length` function.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "{user_count: .users | length, first_name_length: .users[0].name | length}"
+  },
+  {
+    "title": "Get Object Keys",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you get a list of all the keys present in the first user object?",
+    "narrative": "Sometimes you need to know what keys are available in an object before you process it. `keys` gives you a sorted array of all the key names.",
+    "hint": "Select the first user, then pipe it to `keys`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[0] | keys"
+  },
+  {
+    "title": "Array Slicing",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you extract specific subsets of an array, such as the first three elements, a middle section, and the last two elements?",
+    "narrative": "You can select a sub-section of an array. The slice `[start:end]` includes the element at `start` and goes up to, but does not include, the element at `end`.",
+    "hint": "To get the 2nd and 3rd elements (indices 1 and 2), use `[1:3]`.",
+    "input": "[\n  \"a\",\n  \"b\",\n  \"c\",\n  \"d\",\n  \"e\"\n]",
+    "query": "{ first_three: .[:3], middle_three: .[1:4], last_two: .[-2:] }"
+  },
+  {
+    "title": "Finding Paths with `path`",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you find the exact JSON path to every value that is equal to the string 'admin'?",
+    "narrative": "Sometimes you need to know *where* a piece of data is located, not just what it is. `path` gives you an array representing the path, e.g., `[\"users\", 0, \"name\"]`.",
+    "hint": "Find the path to any value that equals `\"admin\"`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "path(.users[].roles[] == \"admin\")"
+  },
+  {
+    "title": "Get Paths of Values",
+    "category": " Basics: Navigation & Extraction",
+    "description": "Problem: How would you generate a list of all possible navigation paths for a given JSON object?",
+    "narrative": "While `path(filter)` finds the path to a specific value, `paths` simply lists all valid paths. This can be useful for understanding the structure of an unknown JSON document.",
+    "hint": "Pipe the input to `paths`.",
+    "input": "{\n  \"a\": {\n    \"b\": [\n      1,\n      2\n    ]\n  }\n}",
+    "query": "paths"
+  },
+  {
+    "title": "Simple Object Construction",
+    "category": " Basics: Construction & Output",
+    "description": "Problem: How would you construct a new object with a custom key `first_user_name` containing the first user's name, and `total_users` containing the total count from the metadata?",
+    "narrative": "You're not limited to just extracting data; you can create new objects. The syntax `{ \"new_key\": .old.path }` creates a new object mapping.",
+    "hint": "Use curly braces `{}` to define the new object.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "{ first_user_name: .users[0].name, total_users: .meta.total }"
+  },
+  {
+    "title": "Object Construction Shorthand",
+    "category": " Basics: Construction & Output",
+    "description": "Problem: For each user, how would you create a new, simpler object containing only their `id` and `name`?",
+    "narrative": "Instead of `{\"name\": .name, \"id\": .id}`, you can just write `{name, id}`.",
+    "hint": "Iterate the users, then pipe each to `{id, name}`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[] | {id, name}"
+  },
+  {
+    "title": "Array Construction with []",
+    "category": " Basics: Construction & Output",
+    "description": "Problem: How would you produce a single JSON array containing just the names of all users?",
+    "narrative": "If you wrap a filter that produces a stream in square brackets `[...]`, it will collect all the outputs into a single array.",
+    "hint": "The expression `.users[] | .name` produces a stream of names. Wrap it in `[]`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "[.users[] | .name]"
+  },
+  {
+    "title": "String Interpolation",
+    "category": " Basics: Construction & Output",
+    "description": "Problem: How would you create a formatted string like 'User Alice has ID 1.' by embedding values from the input object?",
+    "narrative": "Often the goal is to produce a human-readable string. You can embed the result of any jq filter directly into a string using the `\\(...)` syntax.",
+    "hint": "The string will be `\"User \\(.name) has ID \\(.id).\"`",
+    "input": "{\n  \"id\": 1,\n  \"name\": \"Alice\"\n}",
+    "query": "\"User \\(.name) has ID \\(.id).\""
+  },
+  {
+    "title": "Conditional Object Fields",
+    "category": " Basics: Construction & Output",
+    "description": "Problem: How would you transform an array of objects, adding a new key `opt_key` only if the original object contains an 'optional' field?",
+    "narrative": "By wrapping a key-value pair in parentheses inside an `if` statement, you can conditionally include it using the `+` operator.",
+    "hint": "Use `+ (if .optional? then {opt_key: .optional} else {} end)`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"A\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"B\",\n    \"optional\": \"value\"\n  }\n]",
+    "query": ".[] | {id, name} + (if has(\"optional\") then {opt_key: .optional} else {} end)"
+  },
+  {
+    "title": "Transforming Arrays with `map`",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you transform an array of user objects into a new array where each object only contains the `name` and `id`?",
+    "narrative": "When you want to transform every item in an array without changing the number of items, `map` is the right tool.",
+    "hint": "Use `map` to apply the transformation `{name, id}` to each user.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users | map({name, id})"
+  },
+  {
+    "title": "Get Unique Array Values",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you compile a list of all user roles from all users, and then produce a final, sorted list with no duplicates?",
+    "narrative": "To get a distinct list of values, such as all the unique roles users have, use `unique`.",
+    "hint": "First, create an array of all roles: `[.users[].roles[]]`. Then pipe it to `unique`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "[.users[].roles[]] | unique"
+  },
+  {
+    "title": "Sorting an Array",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you produce a new array containing all user names, sorted alphabetically?",
+    "narrative": "The `sort` filter sorts an array in ascending order. If it's an array of strings, it sorts alphabetically.",
+    "hint": "Create an array of names `[.users[] | .name]` and pipe it to `sort`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "[.users[] | .name] | sort"
+  },
+  {
+    "title": "Sort by Multiple Keys",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you sort a list of log entries first by message alphabetically, and then by log level?",
+    "narrative": "jq's `sort` is stable. To sort by `region` then `level`, you sort by `level` first, then `region`.",
+    "hint": "Sort by msg, then sort by level.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": "sort_by(.msg) | sort_by(.level)"
+  },
+  {
+    "title": "Flattening Nested Arrays",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you take a nested array (an array of arrays) and combine all its elements into a single, one-dimensional array?",
+    "narrative": "Sometimes you end up with nested arrays. `flatten` will 'unpack' these nested arrays by one level.",
+    "hint": "Pipe the nested array to `flatten`.",
+    "input": "[\n  [\n    1,\n    2\n  ],\n  [\n    3,\n    4,\n    5\n  ],\n  [],\n  [\n    6\n  ]\n]",
+    "query": "flatten"
+  },
+  {
+    "title": "Joining Array Elements",
+    "category": " Arrays & Iteration",
+    "description": "Problem: How would you take an array of roles and combine them into a single, comma-separated string?",
+    "narrative": "The opposite of `split`. `join` is useful for creating formatted strings, like a comma-separated list of tags.",
+    "hint": "Pipe the array of roles to `join(\", \")`.",
+    "input": "{\n  \"id\": 1,\n  \"name\": \"Alice\",\n  \"email\": \"alice@example.com\",\n  \"roles\": [\n    \"admin\",\n    \"editor\"\n  ]\n}",
+    "query": ".roles | join(\", \")"
+  },
+  {
+    "title": "Filtering with `select`",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you filter a list of log entries to show only those where the `level` is 'ERROR'?",
+    "narrative": "`select()` is the primary way to filter data in jq. You provide it with a condition that evaluates to true or false.",
+    "hint": "Iterate the array, then pipe each object to `select()` with the condition inside.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select(.level == \"ERROR\")"
+  },
+  {
+    "title": "Filtering by Numeric Condition",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you filter a list of log entries to find only those with a latency greater than or equal to 500?",
+    "narrative": "You can use any boolean expression inside `select`. This is useful for finding data that falls within a certain numeric range.",
+    "hint": "The condition is `.context.latency_ms >= 500`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select(.context.latency_ms >= 500)"
+  },
+  {
+    "title": "Check if Key Exists with `has`",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you filter a list of log entries to find only the ones that contain a `latency_ms` key?",
+    "narrative": "Sometimes you need to find objects that contain an optional field. The `has()` function checks for the presence of a key.",
+    "hint": "We want to find the log entry that `has` the `latency_ms` key in its context.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select(.context | has(\"latency_ms\"))"
+  },
+  {
+    "title": "Boolean Logic `and`/`or`",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you filter log entries to find those that are both an 'ERROR' level and occurred in the 'us-east-1' region?",
+    "narrative": "Real-world filtering often requires multiple criteria. You can combine checks using `and` and `or`.",
+    "hint": "The condition is `(.level == \"ERROR\") and (.context.region == \"us-east-1\")`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select((.level == \"ERROR\") and (.context.region == \"us-east-1\"))"
+  },
+  {
+    "title": "Default Values with `//`",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you process a list of logs, ensuring that if a log's `context.service` field is missing, it defaults to the string 'unknown'?",
+    "narrative": "Dealing with missing data is common. The `//` operator lets you gracefully handle this by substituting a default value.",
+    "hint": "Try to access `.context.service`, which is sometimes missing, and provide a default.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | {msg, service: (.context.service // \"unknown\")}"
+  },
+  {
+    "title": "Conditional Logic `if-then-else`",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you add a new field `type` to each user object, setting its value to 'Admin User' if they have the 'admin' role, and 'Regular User' otherwise?",
+    "narrative": "jq supports standard `if-then-else` expressions. This is powerful for transforming data conditionally.",
+    "hint": "Check `if (.roles | contains([\"admin\"])) then \"Admin User\" else \"Regular User\" end`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[] | . + {type: (if .roles | contains([\"admin\"]) then \"Admin User\" else \"Regular User\" end)}"
+  },
+  {
+    "title": "Boolean Aggregation `any`/`all`",
+    "category": " Filtering & Logic",
+    "description": "Problem: For each user, how would you add a boolean field `is_admin` that is true if any of their roles is 'admin'?",
+    "narrative": "These are useful for validating data. Does this user have *any* admin roles? Do *all* the items in this order have a price?",
+    "hint": "Check if `any` role is equal to `\"admin\"`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"roles\": [\n      \"admin\",\n      \"editor\"\n    ]\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Bob\",\n    \"email\": \"bob@example.com\",\n    \"roles\": [\n      \"viewer\"\n    ]\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Charlie\",\n    \"email\": \"charlie@company.org\",\n    \"roles\": [\n      \"editor\"\n    ]\n  }\n]",
+    "query": ".[] | {name, is_admin: (.roles | any(. == \"admin\"))}"
+  },
+  {
+    "title": "Checking Data Types",
+    "category": " Filtering & Logic",
+    "description": "Problem: How would you inspect an array of mixed data types and output a list of objects, each showing the original value and its corresponding JSON type?",
+    "narrative": "When processing unpredictable data, it's good practice to check types before attempting operations that might fail.",
+    "hint": "Select elements where `type == \"number\"`.",
+    "input": "[\n  1,\n  \"text\",\n  {\n    \"a\": 1\n  },\n  42,\n  null,\n  true\n]",
+    "query": ".[] | {value: ., type: type}"
+  },
+  {
+    "title": "Deleting a Field",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you remove the `email` field from every user object in the list?",
+    "narrative": "Sometimes you want to remove sensitive or unnecessary data. The `del()` function removes a field.",
+    "hint": "Iterate the users and pipe each one to `del(.email)`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[] | del(.email)"
+  },
+  {
+    "title": "Update Assignment `|=`",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you update the `name` of the first user to be all uppercase, without changing any other data?",
+    "narrative": "Instead of just replacing a value, `|=` lets you take the current value, run a filter on it, and replace the original value with the result.",
+    "hint": "The path is `.users[0].name`. The filter to apply is `ascii_upcase`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[0].name |= ascii_upcase"
+  },
+  {
+    "title": "Merging Objects",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you combine two objects into one, where keys from the second object overwrite keys from the first in case of a conflict?",
+    "narrative": "On objects, `+` performs a shallow merge. If a key exists in both, the value from the right-hand object is used.",
+    "hint": "Combine the objects with `+`.",
+    "input": "{\n  \"o1\": {\n    \"a\": 1,\n    \"b\": 2\n  },\n  \"o2\": {\n    \"b\": 3,\n    \"c\": 4\n  }\n}",
+    "query": ".o1 + .o2"
+  },
+  {
+    "title": "Deep (Recursive) Merging",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you merge two configuration objects, where nested objects are also merged recursively instead of being replaced?",
+    "narrative": "Unlike `+`, the `*` operator will merge nested objects as well. This is what you usually want when merging configuration files.",
+    "hint": "Use `.[0] * .[1]` to merge the default and user configs.",
+    "input": "[\n  {\n    \"db\": {\n      \"host\": \"db\",\n      \"port\": 5432,\n      \"ssl\": false\n    }\n  },\n  {\n    \"db\": {\n      \"port\": 1234,\n      \"user\": \"admin\"\n    }\n  }\n]",
+    "query": ".[0] * .[1]"
+  },
+  {
+    "title": "Diffing Objects",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you compare two objects and produce a new object that shows only the key-value pairs that have changed?",
+    "narrative": "If you subtract one object from another, jq will remove all key-value pairs from the first object that are also present in the second.",
+    "hint": "The query is `.[1] - .[0]`",
+    "input": "[\n  {\n    \"a\": 1,\n    \"b\": 2,\n    \"c\": 3\n  },\n  {\n    \"a\": 1,\n    \"b\": 99,\n    \"c\": 3\n  }\n]",
+    "query": ".[1] - .[0]"
+  },
+  {
+    "title": "Object to Array (`to_entries`)",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you convert an object into an array of key-value pairs, where each element is an object like `{\"key\": \"some_key\", \"value\": \"some_value\"}`?",
+    "narrative": "Sometimes it's easier to process data as a list rather than an object, especially if you need to filter by key names.",
+    "hint": "Pipe the `meta` object to `to_entries`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".meta | to_entries"
+  },
+  {
+    "title": "Array to Object (`from_entries`)",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you take an array of `{\"key\": ..., \"value\": ...}` objects and convert it back into a standard JSON object?",
+    "narrative": "This is useful for pivoting data or reconstructing an object after filtering via `to_entries`.",
+    "hint": "This structure is already perfect for `from_entries`.",
+    "input": "[\n  {\n    \"key\": \"Name\",\n    \"value\": \"web-server-01\"\n  },\n  {\n    \"key\": \"Environment\",\n    \"value\": \"Production\"\n  }\n]",
+    "query": "from_entries"
+  },
+  {
+    "title": "Transform Object Values",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you apply a transformation to every value in an object, such as doubling all numeric values while leaving others unchanged?",
+    "narrative": "This is a convenient way to apply a transformation to all values in an object without changing the keys.",
+    "hint": "Use `map_values(tostring)`.",
+    "input": "{\n  \"id\": 123,\n  \"count\": 45,\n  \"name\": \"item\"\n}",
+    "query": "map_values(if type==\"number\" then . * 2 else . end)"
+  },
+  {
+    "title": "Get and Set by Path",
+    "category": " Object Manipulation",
+    "description": "Problem: How would you programmatically update a deeply nested value in an object using a path that is defined in an array (e.g., `[\"a\", \"b\", 1]`)?",
+    "narrative": "This is the programmatic equivalent of dot notation, useful when paths are dynamic variables.",
+    "hint": "Define a path, then use `setpath` to change the value at that location.",
+    "input": "{\n  \"a\": {\n    \"b\": [\n      1,\n      2\n    ]\n  }\n}",
+    "query": "[\"a\", \"b\", 1] as $path | setpath($path; 99)"
+  },
+  {
+    "title": "Math: Basic Arithmetic",
+    "category": " Data Transformation",
+    "description": "Problem: How would you calculate a `total_cost` by multiplying the `quantity` by the `price_per_item`?",
+    "narrative": "Standard arithmetic operators are available for numeric calculations.",
+    "hint": "Calculate total price with `*`.",
+    "input": "{\n  \"quantity\": 10,\n  \"price_per_item\": 2.5\n}",
+    "query": "{ total_cost: (.quantity * .price_per_item) }"
+  },
+  {
+    "title": "Math: Subtraction & Sets",
+    "category": " Data Transformation",
+    "description": "Problem: How would you calculate a final price by subtracting a discount, and also find the missing items in a user's permissions array compared to all permissions?",
+    "narrative": "The `-` operator is context-aware. On numbers, it subtracts. On arrays, it removes elements found in the second array from the first.",
+    "hint": "Calculate `.price - .discount` and `.all_permissions - .user_permissions`",
+    "input": "{\n  \"price\": 100,\n  \"discount\": 15,\n  \"all\": [\n    \"a\",\n    \"b\"\n  ],\n  \"user\": [\n    \"a\"\n  ]\n}",
+    "query": "{ final_price: (.price - .discount), missing: (.all - .user) }"
+  },
+  {
+    "title": "Math: Handling Nulls",
+    "category": " Data Transformation",
+    "description": "Problem: How would you safely perform a subtraction where the price or discount might be `null`, treating any `null` value as zero?",
+    "narrative": "Math on `null` produces `null`. A common pattern is `(.field // 0)` to ensure you are always working with a number.",
+    "hint": "Calculate `(.price // 0) - (.discount // 0)`.",
+    "input": "[\n  {\n    \"price\": null,\n    \"discount\": null\n  }\n]",
+    "query": ".[] | {final_price: ((.price // 0) - (.discount // 0))}"
+  },
+  {
+    "title": "String: Contains",
+    "category": " Data Transformation",
+    "description": "Problem: How would you filter a list of log entries to find only those whose message contains the word 'Database'?",
+    "narrative": "`contains` is useful for simple keyword searching within text fields.",
+    "hint": "Use `select` with the condition `.msg | contains(\"database\")`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select(.msg | contains(\"Database\"))"
+  },
+  {
+    "title": "String: Starts/Ends With",
+    "category": " Data Transformation",
+    "description": "Problem: How would you filter a list of filenames to select only the ones that end with the '.log' extension?",
+    "narrative": "Perfect for filtering filenames or prefixes without complex regex.",
+    "hint": "Select files where the name `endswith(\".log\")`.",
+    "input": "[\n  \"app.log\",\n  \"config.json\"\n]",
+    "query": ".[] | select(endswith(\".log\"))"
+  },
+  {
+    "title": "String: Splitting",
+    "category": " Data Transformation",
+    "description": "Problem: How would you take a single comma-separated string of tags and convert it into a JSON array of individual tag strings?",
+    "narrative": "Useful for parsing structured strings like CSV lines or tags.",
+    "hint": "Pipe the string to `split(\",\")`.",
+    "input": "{\n  \"tags\": \"go,docker,linux\"\n}",
+    "query": ".tags | split(\",\")"
+  },
+  {
+    "title": "Regex: Test",
+    "category": " Data Transformation",
+    "description": "Problem: How would you filter a list of users to find only those whose email address ends in '@gmail.com' or '@outlook.com'?",
+    "narrative": "For complex string matching, use regular expressions within `test()`.",
+    "hint": "The regex for a gmail/outlook is `\"@(gmail|outlook)\\\\.com$\"`.",
+    "input": "[\n  {\n    \"email\": \"test@gmail.com\"\n  }\n]",
+    "query": ".[] | select(.email | test(\"@(gmail|outlook)\\\\.com$\"))"
+  },
+  {
+    "title": "Regex: Capture",
+    "category": " Data Transformation",
+    "description": "Problem: How would you parse an email address to extract the username and the domain into a new object with `user` and `domain` keys?",
+    "narrative": "When you need to extract specific parts of a string (like a user and domain from an email).",
+    "hint": "The regex is `\"^(?<user>[^@]+)@(?<domain>.+)\"`.",
+    "input": "{\n  \"email\": \"alice@example.com\"\n}",
+    "query": ".email | capture(\"^(?<user>[^@]+)@(?<domain>.+)\")"
+  },
+  {
+    "title": "Encoding: Base64",
+    "category": " Data Transformation",
+    "description": "Problem: How would you take a string, encode it into Base64, and then decode it back to the original string?",
+    "narrative": "Common in Kubernetes Secrets and web APIs.",
+    "hint": "Pipe to `@base64` then `@base64d`.",
+    "input": "{\n  \"text\": \"hello jq\"\n}",
+    "query": "{encoded: (.text | @base64), decoded: (.text | @base64 | @base64d)}"
+  },
+  {
+    "title": "Encoding: URI",
+    "category": " Data Transformation",
+    "description": "Problem: How would you safely construct a URL by taking a query string with special characters (like '&') and properly percent-encoding it?",
+    "narrative": "Crucial for safely building URLs with query parameters.",
+    "hint": "Pipe the string to `@uri`.",
+    "input": "{\n  \"query\": \"jq examples & tricks\"\n}",
+    "query": "\"https://google.com/search?q=\\(.query | @uri)\""
+  },
+  {
+    "title": "Date/Time Formatting",
+    "category": " Data Transformation",
+    "description": "Problem: How would you convert a Unix timestamp (a number) into a human-readable date string formatted as 'YYYY-MM-DD HH:MM:SS'?",
+    "narrative": "After converting a numeric timestamp with `todate`, you can format it using `strftime` directives.",
+    "hint": "Convert with `todate`, then `strftime(\"%Y-%m-%d %H:%M:%S\")`.",
+    "input": "{\n  \"ts\": 1672531200\n}",
+    "query": ".ts | todate | strftime(\"%Y-%m-%d %H:%M:%S\")"
+  },
+  {
+    "title": "Summing with `add`",
+    "category": " Aggregation & Summary",
+    "description": "Problem: How would you calculate the sum of all user IDs?",
+    "narrative": "A common aggregation task. Create an array of numbers, then pipe to `add`.",
+    "hint": "Create array `[.users[] | .id]`, then `add`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": "[.users[] | .id] | add"
+  },
+  {
+    "title": "Grouping with `group_by`",
+    "category": " Aggregation & Summary",
+    "description": "Problem: How would you take a flat list of log entries and group them into separate arrays based on the region they came from?",
+    "narrative": "Collects objects with the same value for a key into new arrays.",
+    "hint": "Use `group_by(.context.region)`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": "group_by(.context.region)"
+  },
+  {
+    "title": "Group By and Count",
+    "category": " Aggregation & Summary",
+    "description": "Problem: How would you create a summary report showing each region and the total number of log entries for that region?",
+    "narrative": "After grouping, map over the groups to count them using `length`.",
+    "hint": "After `group_by`, pipe to `map({region: .[0].context.region, count: length})`",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": "group_by(.context.region) | map({region: .[0].context.region, count: length})"
+  },
+  {
+    "title": "Advanced Aggregation with `reduce`",
+    "category": " Aggregation & Summary",
+    "description": "Problem: How would you transform an array of user objects into a single lookup object (a map) where keys are user IDs and values are user names?",
+    "narrative": "More powerful than `add` or `group_by`, `reduce` lets you build any data structure from a stream of inputs.",
+    "hint": "Start with `{}`, iterate users, and build a map of ID to Name.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"roles\": [\n      \"admin\",\n      \"editor\"\n    ]\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Bob\",\n    \"email\": \"bob@example.com\",\n    \"roles\": [\n      \"viewer\"\n    ]\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Charlie\",\n    \"email\": \"charlie@company.org\",\n    \"roles\": [\n      \"editor\"\n    ]\n  }\n]",
+    "query": "reduce .[] as $user ({}; . + {($user.id | tostring): $user.name})"
+  },
+  {
+    "title": "Logs: Filter by Timestamp",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you filter a stream of log entries to find only those that occurred within a specific time window (e.g., between two timestamps)?",
+    "narrative": "Common task: select logs where timestamp is `>=` start and `<` end.",
+    "hint": "Use `select` with numeric comparison on `.ts`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] | select(.ts >= 1610000050 and .ts < 1610000100)"
+  },
+  {
+    "title": "Logs: Count by Level",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you create a summary report showing the count of log entries for each severity level (e.g., INFO, ERROR, WARN)?",
+    "narrative": "Use `group_by` on the `.level` field to summarize log noise.",
+    "hint": "`group_by(.level)` and `map` length.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": "group_by(.level) | map({level: .[0].level, count: length})"
+  },
+  {
+    "title": "AWS: Get EC2 IPs",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you parse the JSON output from an AWS CLI command to extract a list of all non-null Public IP addresses for your EC2 instances?",
+    "narrative": "Drill down through `.Reservations` and `.Instances`.",
+    "hint": "Path: `.Reservations[].Instances[] | .PublicIpAddress`",
+    "input": "{\n  \"Reservations\": [\n    {\n      \"Instances\": [\n        {\n          \"InstanceId\": \"i-123\",\n          \"PublicIpAddress\": \"54.1.2.3\",\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"web-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"prod\"\n            }\n          ]\n        },\n        {\n          \"InstanceId\": \"i-456\",\n          \"PublicIpAddress\": \"52.4.5.6\",\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"db-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"prod\"\n            }\n          ]\n        },\n        {\n          \"InstanceId\": \"i-789\",\n          \"PublicIpAddress\": null,\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"worker-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"dev\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+    "query": ".Reservations[].Instances[] | .PublicIpAddress | select(. != null)"
+  },
+  {
+    "title": "AWS: Flatten Tags",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you convert the AWS tag format, an array of `{\"Key\": ..., \"Value\": ...}` objects, into a simple, flat JSON object of key-value pairs?",
+    "narrative": "Use `map` to rename Key/Value to key/value, then `from_entries`.",
+    "hint": "Pipe `.Tags` to `map({key: .Key, value: .Value}) | from_entries`.",
+    "input": "{\n  \"InstanceId\": \"i-123\",\n  \"PublicIpAddress\": \"54.1.2.3\",\n  \"Tags\": [\n    {\n      \"Key\": \"Name\",\n      \"Value\": \"web-01\"\n    },\n    {\n      \"Key\": \"Env\",\n      \"Value\": \"prod\"\n    }\n  ]\n}",
+    "query": "{InstanceId, Tags: (.Tags | map({key: .Key, value: .Value}) | from_entries)}"
+  },
+  {
+    "title": "AWS: Find Instance by Tag",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you find the Instance ID of all EC2 instances that have a tag 'Env' with the value 'prod'?",
+    "narrative": "Flatten the tags first, then use `select` to check the tag value.",
+    "hint": "Flatten tags, then check `.Env == \"prod\"`.",
+    "input": "{\n  \"Reservations\": [\n    {\n      \"Instances\": [\n        {\n          \"InstanceId\": \"i-123\",\n          \"PublicIpAddress\": \"54.1.2.3\",\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"web-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"prod\"\n            }\n          ]\n        },\n        {\n          \"InstanceId\": \"i-456\",\n          \"PublicIpAddress\": \"52.4.5.6\",\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"db-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"prod\"\n            }\n          ]\n        },\n        {\n          \"InstanceId\": \"i-789\",\n          \"PublicIpAddress\": null,\n          \"Tags\": [\n            {\n              \"Key\": \"Name\",\n              \"Value\": \"worker-01\"\n            },\n            {\n              \"Key\": \"Env\",\n              \"Value\": \"dev\"\n            }\n          ]\n        }\n      ]\n    }\n  ]\n}",
+    "query": ".Reservations[].Instances[] | select((.Tags | map({key: .Key, value: .Value}) | from_entries).Env == \"prod\") | .InstanceId"
+  },
+  {
+    "title": "Docker: Parse Env Vars",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you parse a Docker container's environment variables, which are given as an array of 'KEY=VALUE' strings, into a single JSON object?",
+    "narrative": "Split each string by `=`, map to `{key, value}`, then `from_entries`.",
+    "hint": "`map(split(\"=\") | {key: .[0], value: .[1]}) | from_entries`",
+    "input": "{\n  \"Id\": \"a1b2c3d4e5\",\n  \"Name\": \"/web-production\",\n  \"State\": {\n    \"Status\": \"running\",\n    \"Running\": true,\n    \"ExitCode\": 0,\n    \"Health\": {\n      \"Status\": \"healthy\",\n      \"FailingStreak\": 0\n    }\n  },\n  \"Config\": {\n    \"Image\": \"nginx:alpine\",\n    \"Env\": [\n      \"HOST=0.0.0.0\",\n      \"PORT=80\",\n      \"API_KEY=secret_123\"\n    ],\n    \"Labels\": {\n      \"com.docker.compose.service\": \"web\",\n      \"org.opencontainers.image.version\": \"1.21\"\n    }\n  },\n  \"NetworkSettings\": {\n    \"Networks\": {\n      \"app_net\": {\n        \"IPAddress\": \"172.18.0.3\",\n        \"Gateway\": \"172.18.0.1\",\n        \"Aliases\": [\n          \"web\",\n          \"a1b2c3\"\n        ]\n      }\n    }\n  },\n  \"Mounts\": [\n    {\n      \"Type\": \"bind\",\n      \"Source\": \"/host/nginx.conf\",\n      \"Destination\": \"/etc/nginx/nginx.conf\",\n      \"RW\": true\n    },\n    {\n      \"Type\": \"volume\",\n      \"Name\": \"logs_vol\",\n      \"Source\": \"/var/lib/docker/volumes/logs/_data\",\n      \"Destination\": \"/var/log/nginx\",\n      \"RW\": true\n    }\n  ]\n}",
+    "query": ".Config.Env | map(split(\"=\") | {key: .[0], value: .[1]}) | from_entries"
+  },
+  {
+    "title": "K8s: Get Pod Status",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you process the JSON output from `kubectl get pods` to create a simple report showing each pod's name and its current phase (e.g., 'Running', 'Pending')?",
+    "narrative": "Iterate `.items[]` and extract `.metadata.name` and `.status.phase`.",
+    "hint": "Construct `{name, status}` objects.",
+    "input": "{\n  \"items\": [\n    {\n      \"metadata\": {\n        \"name\": \"my-pod-1\"\n      },\n      \"status\": {\n        \"phase\": \"Running\",\n        \"containerStatuses\": [\n          {\n            \"name\": \"main\",\n            \"restartCount\": 0\n          }\n        ]\n      }\n    },\n    {\n      \"metadata\": {\n        \"name\": \"crashing-pod-2\"\n      },\n      \"status\": {\n        \"phase\": \"Running\",\n        \"containerStatuses\": [\n          {\n            \"name\": \"main\",\n            \"restartCount\": 12\n          }\n        ]\n      }\n    },\n    {\n      \"metadata\": {\n        \"name\": \"pending-pod-3\"\n      },\n      \"status\": {\n        \"phase\": \"Pending\",\n        \"containerStatuses\": null\n      }\n    }\n  ]\n}",
+    "query": ".items[] | {name: .metadata.name, status: .status.phase}"
+  },
+  {
+    "title": "K8s: Find Crashing Pods",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you find the names of all Kubernetes pods that have a container with a restart count greater than 5?",
+    "narrative": "Inspect `status.containerStatuses` for high `restartCount`.",
+    "hint": "Select pods where `any` container has restarts > 5.",
+    "input": "{\n  \"items\": [\n    {\n      \"metadata\": {\n        \"name\": \"my-pod-1\"\n      },\n      \"status\": {\n        \"phase\": \"Running\",\n        \"containerStatuses\": [\n          {\n            \"name\": \"main\",\n            \"restartCount\": 0\n          }\n        ]\n      }\n    },\n    {\n      \"metadata\": {\n        \"name\": \"crashing-pod-2\"\n      },\n      \"status\": {\n        \"phase\": \"Running\",\n        \"containerStatuses\": [\n          {\n            \"name\": \"main\",\n            \"restartCount\": 12\n          }\n        ]\n      }\n    },\n    {\n      \"metadata\": {\n        \"name\": \"pending-pod-3\"\n      },\n      \"status\": {\n        \"phase\": \"Pending\",\n        \"containerStatuses\": null\n      }\n    }\n  ]\n}",
+    "query": ".items[] | select(.status.containerStatuses | any(.restartCount > 5)) | .metadata.name"
+  },
+  {
+    "title": "GenAI: Calculate Token Cost",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: From a GenAI trace, how would you calculate the estimated cost of an LLM call by multiplying the total tokens used by a fixed rate per token?",
+    "narrative": "LLMs are expensive! Calculate the cost by multiplying tokens by rate.",
+    "hint": "Multiply `.attributes[\"llm.usage.total_tokens\"] * 0.00003`.",
+    "input": "{\n  \"trace_id\": \"0af765\",\n  \"spans\": [\n    {\n      \"name\": \"chat_completion\",\n      \"kind\": \"CLIENT\",\n      \"start_time_unix_nano\": 1610000000000000,\n      \"end_time_unix_nano\": 1610000002000000,\n      \"attributes\": {\n        \"llm.system\": \"openai\",\n        \"llm.request.model\": \"gpt-4\",\n        \"llm.usage.prompt_tokens\": 150,\n        \"llm.usage.completion_tokens\": 40,\n        \"llm.usage.total_tokens\": 190,\n        \"gen_ai.prompt.0.content\": \"Summarize this JSON data...\",\n        \"gen_ai.completion.0.content\": \"Here is the summary...\"\n      },\n      \"status\": {\n        \"code\": \"OK\"\n      }\n    },\n    {\n      \"name\": \"tool_execution\",\n      \"kind\": \"INTERNAL\",\n      \"attributes\": {\n        \"tool.name\": \"calculator\",\n        \"tool.args\": \"{\\\"x\\\": 5, \\\"y\\\": 10}\"\n      }\n    }\n  ]\n}",
+    "query": ".spans[] | select(.attributes.\"llm.usage.total_tokens\") | {model: .attributes.\"llm.request.model\", cost: (.attributes.\"llm.usage.total_tokens\" * 0.00003)}"
+  },
+  {
+    "title": "GenAI: Parse Tool Arguments",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: In a GenAI trace, the arguments for a tool call are stored as a JSON string inside another JSON object. How would you parse this nested string into a usable JSON object?",
+    "narrative": "The tool arguments are stored as a *JSON string*. Use `fromjson` to parse it.",
+    "hint": "Use `fromjson` on the `tool.args` attribute string.",
+    "input": "{\n  \"trace_id\": \"0af765\",\n  \"spans\": [\n    {\n      \"name\": \"chat_completion\",\n      \"kind\": \"CLIENT\",\n      \"start_time_unix_nano\": 1610000000000000,\n      \"end_time_unix_nano\": 1610000002000000,\n      \"attributes\": {\n        \"llm.system\": \"openai\",\n        \"llm.request.model\": \"gpt-4\",\n        \"llm.usage.prompt_tokens\": 150,\n        \"llm.usage.completion_tokens\": 40,\n        \"llm.usage.total_tokens\": 190,\n        \"gen_ai.prompt.0.content\": \"Summarize this JSON data...\",\n        \"gen_ai.completion.0.content\": \"Here is the summary...\"\n      },\n      \"status\": {\n        \"code\": \"OK\"\n      }\n    },\n    {\n      \"name\": \"tool_execution\",\n      \"kind\": \"INTERNAL\",\n      \"attributes\": {\n        \"tool.name\": \"calculator\",\n        \"tool.args\": \"{\\\"x\\\": 5, \\\"y\\\": 10}\"\n      }\n    }\n  ]\n}",
+    "query": ".spans[] | select(.name == \"tool_execution\") | .attributes.\"tool.args\" | fromjson"
+  },
+  {
+    "title": "Generate .env File",
+    "category": " Scenario: Cloud & DevOps",
+    "description": "Problem: How would you convert a JSON object of key-value pairs into a series of 'KEY=VALUE' strings suitable for a .env file?",
+    "narrative": "Use `to_entries` and string interpolation to generate config files.",
+    "hint": "Format: `\"\\(.key)=\\(.value)\"`.",
+    "input": "{\n  \"DB_HOST\": \"localhost\",\n  \"DB_PORT\": 5432\n}",
+    "query": "to_entries[] | \"\\(.key|ascii_upcase)=\\(.value)\""
+  },
+  {
+    "title": "GitHub: List Names",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: From a GitHub API response listing repositories, how would you extract just the name of each repository?",
+    "narrative": "Simple extraction from an array of objects.",
+    "hint": "Iterate and pipe to `.name`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"my-app\",\n    \"private\": false,\n    \"fork\": false,\n    \"stargazers_count\": 152,\n    \"language\": \"TypeScript\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"dotfiles\",\n    \"private\": true,\n    \"fork\": false,\n    \"stargazers_count\": 10,\n    \"language\": \"Shell\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"react\",\n    \"private\": false,\n    \"fork\": true,\n    \"stargazers_count\": 200000,\n    \"language\": \"TypeScript\"\n  }\n]",
+    "query": ".[] | .name"
+  },
+  {
+    "title": "GitHub: Find Forks",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you filter a list of GitHub repositories to find only the ones that are forks?",
+    "narrative": "Use `select` on the boolean `.fork` field.",
+    "hint": "Use `select(.fork == true)`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"my-app\",\n    \"private\": false,\n    \"fork\": false,\n    \"stargazers_count\": 152,\n    \"language\": \"TypeScript\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"dotfiles\",\n    \"private\": true,\n    \"fork\": false,\n    \"stargazers_count\": 10,\n    \"language\": \"Shell\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"react\",\n    \"private\": false,\n    \"fork\": true,\n    \"stargazers_count\": 200000,\n    \"language\": \"TypeScript\"\n  }\n]",
+    "query": ".[] | select(.fork == true)"
+  },
+  {
+    "title": "GitHub: Star Count Report",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you transform a list of GitHub repositories into a simplified list of objects, where each object contains only the repo's name and its star count (renamed to `stars`)?",
+    "narrative": "We want to create a clean report. Iterate through the repos and for each one, construct a new object.",
+    "hint": "Iterate and pipe to `{name, stars: .stargazers_count}`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"my-app\",\n    \"private\": false,\n    \"fork\": false,\n    \"stargazers_count\": 152,\n    \"language\": \"TypeScript\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"dotfiles\",\n    \"private\": true,\n    \"fork\": false,\n    \"stargazers_count\": 10,\n    \"language\": \"Shell\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"react\",\n    \"private\": false,\n    \"fork\": true,\n    \"stargazers_count\": 200000,\n    \"language\": \"TypeScript\"\n  }\n]",
+    "query": ".[] | {name, stars: .stargazers_count}"
+  },
+  {
+    "title": "GitHub: Sort Repos by Stars",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you sort a list of GitHub repositories by their star count in descending order (most popular first)?",
+    "narrative": "`sort_by` allows you to sort an array of objects based on a property. Pipe to `reverse` for descending.",
+    "hint": "`sort_by(.stargazers_count) | reverse`",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"my-app\",\n    \"private\": false,\n    \"fork\": false,\n    \"stargazers_count\": 152,\n    \"language\": \"TypeScript\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"dotfiles\",\n    \"private\": true,\n    \"fork\": false,\n    \"stargazers_count\": 10,\n    \"language\": \"Shell\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"react\",\n    \"private\": false,\n    \"fork\": true,\n    \"stargazers_count\": 200000,\n    \"language\": \"TypeScript\"\n  }\n]",
+    "query": "sort_by(.stargazers_count) | reverse | .[] | {name, stars: .stargazers_count}"
+  },
+  {
+    "title": "GitHub: Get Unique Languages",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you scan a list of repositories and produce a single, sorted array of all unique programming languages used across them?",
+    "narrative": "Create an array of all languages, then use `unique` to get the distinct set.",
+    "hint": "Combine `[.[] | .language]` and `unique`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"my-app\",\n    \"private\": false,\n    \"fork\": false,\n    \"stargazers_count\": 152,\n    \"language\": \"TypeScript\"\n  },\n  {\n    \"id\": 2,\n    \"name\": \"dotfiles\",\n    \"private\": true,\n    \"fork\": false,\n    \"stargazers_count\": 10,\n    \"language\": \"Shell\"\n  },\n  {\n    \"id\": 3,\n    \"name\": \"react\",\n    \"private\": false,\n    \"fork\": true,\n    \"stargazers_count\": 200000,\n    \"language\": \"TypeScript\"\n  }\n]",
+    "query": "[.[] | .language] | unique"
+  },
+  {
+    "title": "GitHub: Find Issues by Label",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you filter a list of GitHub issues to find only those that have the 'bug' label?",
+    "narrative": "The `labels` field is an array of objects. Use `any()` to check the label names.",
+    "hint": "Use `select(.labels | any(.name == \"bug\"))`.",
+    "input": "[\n  {\n    \"title\": \"Feature request\",\n    \"state\": \"open\",\n    \"labels\": [\n      {\n        \"name\": \"enhancement\"\n      }\n    ],\n    \"number\": 101\n  },\n  {\n    \"title\": \"Login fails on Safari\",\n    \"state\": \"open\",\n    \"labels\": [\n      {\n        \"name\": \"bug\"\n      },\n      {\n        \"name\": \"p1\"\n      }\n    ],\n    \"number\": 102\n  },\n  {\n    \"title\": \"Update documentation\",\n    \"state\": \"closed\",\n    \"labels\": [],\n    \"number\": 99\n  }\n]",
+    "query": ".[] | select(.labels | any(.name == \"bug\"))"
+  },
+  {
+    "title": "Stripe: List Amounts",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: Given a paginated API response from Stripe, how would you extract the `amount` from each charge object within the `data` array?",
+    "narrative": "Drill into `.data[]` before processing items.",
+    "hint": "Access `.data[]`, then extract `.amount`.",
+    "input": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_1\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"123\"\n      }\n    },\n    {\n      \"id\": \"ch_2\",\n      \"amount\": 1500,\n      \"currency\": \"eur\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"124\"\n      }\n    },\n    {\n      \"id\": \"ch_3\",\n      \"amount\": 3000,\n      \"currency\": \"usd\",\n      \"status\": \"failed\",\n      \"metadata\": {\n        \"order_id\": \"125\"\n      }\n    }\n  ]\n}",
+    "query": ".data[] | .amount"
+  },
+  {
+    "title": "Stripe: Filter Successful Charges",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you filter a list of Stripe charges to find only the ones with a `status` of 'succeeded'?",
+    "narrative": "Access the data array, iterate it, and then use `select`.",
+    "hint": "Use `select(.status == \"succeeded\")`.",
+    "input": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_1\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"123\"\n      }\n    },\n    {\n      \"id\": \"ch_2\",\n      \"amount\": 1500,\n      \"currency\": \"eur\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"124\"\n      }\n    },\n    {\n      \"id\": \"ch_3\",\n      \"amount\": 3000,\n      \"currency\": \"usd\",\n      \"status\": \"failed\",\n      \"metadata\": {\n        \"order_id\": \"125\"\n      }\n    }\n  ]\n}",
+    "query": ".data[] | select(.status == \"succeeded\")"
+  },
+  {
+    "title": "Stripe: Normalize Currency",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: Given that Stripe amounts are in cents, how would you convert the amount for each charge into dollars by dividing by 100?",
+    "narrative": "Divide `.amount` by 100.",
+    "hint": "Calculate `.amount / 100`.",
+    "input": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_1\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"123\"\n      }\n    },\n    {\n      \"id\": \"ch_2\",\n      \"amount\": 1500,\n      \"currency\": \"eur\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"124\"\n      }\n    },\n    {\n      \"id\": \"ch_3\",\n      \"amount\": 3000,\n      \"currency\": \"usd\",\n      \"status\": \"failed\",\n      \"metadata\": {\n        \"order_id\": \"125\"\n      }\n    }\n  ]\n}",
+    "query": ".data[] | {id, amount_dollars: (.amount / 100)}"
+  },
+  {
+    "title": "Stripe: Sum Revenue by Currency",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you calculate the total revenue (sum of amounts) for each currency (e.g., 'usd', 'eur') from a list of charges?",
+    "narrative": "First `group_by(.currency)`, then `map` to construct a summary object summing amounts.",
+    "hint": "Combine `group_by`, `map`, and `add`.",
+    "input": "{\n  \"object\": \"list\",\n  \"data\": [\n    {\n      \"id\": \"ch_1\",\n      \"amount\": 2000,\n      \"currency\": \"usd\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"123\"\n      }\n    },\n    {\n      \"id\": \"ch_2\",\n      \"amount\": 1500,\n      \"currency\": \"eur\",\n      \"status\": \"succeeded\",\n      \"metadata\": {\n        \"order_id\": \"124\"\n      }\n    },\n    {\n      \"id\": \"ch_3\",\n      \"amount\": 3000,\n      \"currency\": \"usd\",\n      \"status\": \"failed\",\n      \"metadata\": {\n        \"order_id\": \"125\"\n      }\n    }\n  ]\n}",
+    "query": ".data | group_by(.currency) | map({currency: .[0].currency, total: (map(.amount) | add)})"
+  },
+  {
+    "title": "Stripe: Flatten Metadata",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you take a Stripe charge object and merge the fields from its nested `metadata` object into the top level of the charge object?",
+    "narrative": "Use `+` to merge `.metadata` into `.`.",
+    "hint": "`. + .metadata | del(.metadata)`",
+    "input": "{\n  \"id\": \"ch_1\",\n  \"amount\": 2000,\n  \"currency\": \"usd\",\n  \"status\": \"succeeded\",\n  \"metadata\": {\n    \"order_id\": \"123\"\n  }\n}",
+    "query": ". + .metadata | del(.metadata)"
+  },
+  {
+    "title": "GeoJSON: Get Coordinates",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you extract a list of all coordinate pairs from a GeoJSON FeatureCollection object?",
+    "narrative": "Iterate `features` and access `geometry.coordinates`.",
+    "hint": "`.features[] | .geometry.coordinates`",
+    "input": "{\n  \"type\": \"FeatureCollection\",\n  \"features\": [\n    {\n      \"type\": \"Feature\",\n      \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          -105,\n          40\n        ]\n      },\n      \"properties\": {\n        \"name\": \"Denver\"\n      }\n    },\n    {\n      \"type\": \"Feature\",\n      \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          -87.6,\n          41.8\n        ]\n      },\n      \"properties\": {\n        \"name\": \"Chicago\"\n      }\n    }\n  ]\n}",
+    "query": ".features[] | .geometry.coordinates"
+  },
+  {
+    "title": "GeoJSON: Get Properties",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: From a GeoJSON FeatureCollection, how would you extract the `properties` object (containing metadata like the name) for each feature?",
+    "narrative": "Each GeoJSON feature has a `properties` object containing metadata.",
+    "hint": "The path is `.features[] | .properties`.",
+    "input": "{\n  \"type\": \"FeatureCollection\",\n  \"features\": [\n    {\n      \"type\": \"Feature\",\n      \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          -105,\n          40\n        ]\n      },\n      \"properties\": {\n        \"name\": \"Denver\"\n      }\n    },\n    {\n      \"type\": \"Feature\",\n      \"geometry\": {\n        \"type\": \"Point\",\n        \"coordinates\": [\n          -87.6,\n          41.8\n        ]\n      },\n      \"properties\": {\n        \"name\": \"Chicago\"\n      }\n    }\n  ]\n}",
+    "query": ".features[] | .properties"
+  },
+  {
+    "title": "BigQuery: Pivot Attributes",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: From a BigQuery export where custom attributes are stored in a single JSON string, how would you parse that string and flatten its contents into the parent object?",
+    "narrative": "Parse the string col with `fromjson`, then `from_entries`.",
+    "hint": "`fromjson | from_entries`",
+    "input": "[\n  {\n    \"row_id\": 1,\n    \"user_info\": {\n      \"id\": 99,\n      \"geo\": {\n        \"city\": \"London\",\n        \"coords\": [\n          51.5,\n          -0.12\n        ]\n      }\n    },\n    \"custom_attributes\": \"[{\\\"key\\\":\\\"tier\\\", \\\"value\\\":\\\"gold\\\"}, {\\\"key\\\":\\\"source\\\", \\\"value\\\":\\\"web\\\"}]\"\n  },\n  {\n    \"row_id\": 2,\n    \"user_info\": {\n      \"id\": 100,\n      \"geo\": {\n        \"city\": \"New York\",\n        \"coords\": [\n          40.7,\n          -74\n        ]\n      }\n    },\n    \"custom_attributes\": \"[{\\\"key\\\":\\\"tier\\\", \\\"value\\\":\\\"silver\\\"}]\"\n  }\n]",
+    "query": ".[] | {row_id} + (.custom_attributes | fromjson | from_entries)"
+  },
+  {
+    "title": "Generate SQL Statements",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you convert an array of user objects into a series of SQL `INSERT` statements?",
+    "narrative": "Use string interpolation to create SQL queries from data.",
+    "hint": "Construct `INSERT INTO ... VALUES ...` string.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"roles\": [\n      \"admin\",\n      \"editor\"\n    ]\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Bob\",\n    \"email\": \"bob@example.com\",\n    \"roles\": [\n      \"viewer\"\n    ]\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Charlie\",\n    \"email\": \"charlie@company.org\",\n    \"roles\": [\n      \"editor\"\n    ]\n  }\n]",
+    "query": ".[] | \"INSERT INTO users (id, name, email) VALUES (\\(.id), '\\(.name)', '\\(.email)');\""
+  },
+  {
+    "title": "Parsing JSON within JSON",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: How would you parse a field that is a string, but its content is itself a valid JSON object, turning it into a queryable object?",
+    "narrative": "Common when logs or DBs embed JSON as a string. Parse it to work with nested data.",
+    "hint": "Pipe `.custom_attributes` to `fromjson`.",
+    "input": "{\n  \"row_id\": 1,\n  \"user_info\": {\n    \"id\": 99,\n    \"geo\": {\n      \"city\": \"London\",\n      \"coords\": [\n        51.5,\n        -0.12\n      ]\n    }\n  },\n  \"custom_attributes\": \"[{\\\"key\\\":\\\"tier\\\", \\\"value\\\":\\\"gold\\\"}, {\\\"key\\\":\\\"source\\\", \\\"value\\\":\\\"web\\\"}]\"\n}",
+    "query": ".custom_attributes | fromjson"
+  },
+  {
+    "title": "Using Variables `as`",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you use a value from the top-level of a document (like total user count) inside a filter that is iterating over an inner array (like the users array)?",
+    "narrative": "Useful for retaining values from a higher scope during iteration.",
+    "hint": "Store `.meta.total as $total` before iterating users.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".meta.total as $total | .users[] | \"User \\(.name) is one of \\($total) total users.\""
+  },
+  {
+    "title": "CLI Arguments (`--arg`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you write a generic query to filter users by a role, where the specific role ('admin', 'editor', etc.) is passed in as a command-line argument?",
+    "narrative": "Inject external variables (like environment names) into your query as `$name`.",
+    "hint": "Simulate passing `--arg role admin`.",
+    "input": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\",\n      \"email\": \"alice@example.com\",\n      \"roles\": [\n        \"admin\",\n        \"editor\"\n      ]\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\",\n      \"email\": \"bob@example.com\",\n      \"roles\": [\n        \"viewer\"\n      ]\n    },\n    {\n      \"id\": 3,\n      \"name\": \"Charlie\",\n      \"email\": \"charlie@company.org\",\n      \"roles\": [\n        \"editor\"\n      ]\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"total\": 3\n  }\n}",
+    "query": ".users[] | select(.roles | contains([$role]))"
+  },
+  {
+    "title": "Raw Output Flag (`-r`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you output a stream of strings, but without the surrounding JSON quotes, so they can be piped to other shell commands?",
+    "narrative": "Essential for generating scripts or config files.",
+    "hint": "Requires `jq -r`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"roles\": [\n      \"admin\",\n      \"editor\"\n    ]\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Bob\",\n    \"email\": \"bob@example.com\",\n    \"roles\": [\n      \"viewer\"\n    ]\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Charlie\",\n    \"email\": \"charlie@company.org\",\n    \"roles\": [\n      \"editor\"\n    ]\n  }\n]",
+    "query": ".[] | \"\\(.id), \\(.name)\""
+  },
+  {
+    "title": "Compact Output Flag (`-c`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you process an array of objects so that each resulting JSON object is printed on a single line, creating a Newline Delimited JSON (NDJSON) stream?",
+    "narrative": "Use this for NDJSON (newline delimited JSON) processing.",
+    "hint": "Requires `jq -c`.",
+    "input": "[\n  {\n    \"id\": 1,\n    \"name\": \"Alice\",\n    \"email\": \"alice@example.com\",\n    \"roles\": [\n      \"admin\",\n      \"editor\"\n    ]\n  },\n  {\n    \"id\": 2,\n    \"name\": \"Bob\",\n    \"email\": \"bob@example.com\",\n    \"roles\": [\n      \"viewer\"\n    ]\n  },\n  {\n    \"id\": 3,\n    \"name\": \"Charlie\",\n    \"email\": \"charlie@company.org\",\n    \"roles\": [\n      \"editor\"\n    ]\n  }\n]",
+    "query": ".[] | {id, name}"
+  },
+  {
+    "title": "Slurp Flag (`-s`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you process a file where each line is a separate JSON object (like a log file), by first reading all of them into a single JSON array?",
+    "narrative": "Essential when processing log files where every line is a separate JSON object.",
+    "hint": "Requires `jq -s`.",
+    "input": "{\"level\": \"info\"}\n{\"level\": \"error\"}\n{\"level\": \"info\"}",
+    "query": "{count: length, error_count: (map(select(.level==\"error\")) | length)}"
+  },
+  {
+    "title": "Error Suppression `?`",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you access a potentially missing field (like `.context.latency_ms`) across many objects without causing an error, outputting `null` if it's not found?",
+    "narrative": "Vital for processing inconsistent data streams.",
+    "hint": "Use `.context.latency_ms?`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": "[.[] | .context.latency_ms?]"
+  },
+  {
+    "title": "Safe Parsing (`try-catch`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you attempt to parse a list of strings as JSON, but if a string is invalid JSON, you output the original string instead of erroring out?",
+    "narrative": "Prevents scripts from crashing on bad data.",
+    "hint": "Use `try fromjson catch .`.",
+    "input": "[\n  \"{\\\"a\\\": 1}\",\n  \"bad json\"\n]",
+    "query": ".[] | try fromjson catch ."
+  },
+  {
+    "title": "Recursive Descent `..`",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you find all values associated with a specific key (e.g., `IPAddress`) no matter how deeply nested they are within a complex JSON document?",
+    "narrative": "Use this to find a key anywhere in a deep hierarchy.",
+    "hint": "`.. | .IPAddress?` finds IPs anywhere.",
+    "input": "{\n  \"Id\": \"a1b2c3d4e5\",\n  \"Name\": \"/web-production\",\n  \"State\": {\n    \"Status\": \"running\",\n    \"Running\": true,\n    \"ExitCode\": 0,\n    \"Health\": {\n      \"Status\": \"healthy\",\n      \"FailingStreak\": 0\n    }\n  },\n  \"Config\": {\n    \"Image\": \"nginx:alpine\",\n    \"Env\": [\n      \"HOST=0.0.0.0\",\n      \"PORT=80\",\n      \"API_KEY=secret_123\"\n    ],\n    \"Labels\": {\n      \"com.docker.compose.service\": \"web\",\n      \"org.opencontainers.image.version\": \"1.21\"\n    }\n  },\n  \"NetworkSettings\": {\n    \"Networks\": {\n      \"app_net\": {\n        \"IPAddress\": \"172.18.0.3\",\n        \"Gateway\": \"172.18.0.1\",\n        \"Aliases\": [\n          \"web\",\n          \"a1b2c3\"\n        ]\n      }\n    }\n  },\n  \"Mounts\": [\n    {\n      \"Type\": \"bind\",\n      \"Source\": \"/host/nginx.conf\",\n      \"Destination\": \"/etc/nginx/nginx.conf\",\n      \"RW\": true\n    },\n    {\n      \"Type\": \"volume\",\n      \"Name\": \"logs_vol\",\n      \"Source\": \"/var/lib/docker/volumes/logs/_data\",\n      \"Destination\": \"/var/log/nginx\",\n      \"RW\": true\n    }\n  ]\n}",
+    "query": ".. | .IPAddress? | select(. != null)"
+  },
+  {
+    "title": "Recursive Modification (`walk`)",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you recursively traverse an entire JSON document and redact the value of any key named `API_KEY`, regardless of its location?",
+    "narrative": "Perfect for redacting sensitive keys anywhere in a document.",
+    "hint": "Use `walk` to redact API keys.",
+    "input": "{\n  \"Id\": \"a1b2c3d4e5\",\n  \"Name\": \"/web-production\",\n  \"State\": {\n    \"Status\": \"running\",\n    \"Running\": true,\n    \"ExitCode\": 0,\n    \"Health\": {\n      \"Status\": \"healthy\",\n      \"FailingStreak\": 0\n    }\n  },\n  \"Config\": {\n    \"Image\": \"nginx:alpine\",\n    \"Env\": [\n      \"HOST=0.0.0.0\",\n      \"PORT=80\",\n      \"API_KEY=secret_123\"\n    ],\n    \"Labels\": {\n      \"com.docker.compose.service\": \"web\",\n      \"org.opencontainers.image.version\": \"1.21\"\n    }\n  },\n  \"NetworkSettings\": {\n    \"Networks\": {\n      \"app_net\": {\n        \"IPAddress\": \"172.18.0.3\",\n        \"Gateway\": \"172.18.0.1\",\n        \"Aliases\": [\n          \"web\",\n          \"a1b2c3\"\n        ]\n      }\n    }\n  },\n  \"Mounts\": [\n    {\n      \"Type\": \"bind\",\n      \"Source\": \"/host/nginx.conf\",\n      \"Destination\": \"/etc/nginx/nginx.conf\",\n      \"RW\": true\n    },\n    {\n      \"Type\": \"volume\",\n      \"Name\": \"logs_vol\",\n      \"Source\": \"/var/lib/docker/volumes/logs/_data\",\n      \"Destination\": \"/var/log/nginx\",\n      \"RW\": true\n    }\n  ]\n}",
+    "query": "walk(if type == \"object\" and has(\"API_KEY\") then .API_KEY |= \"REDACTED\" else . end)"
+  },
+  {
+    "title": "Defining Functions `def`",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you define a reusable function, `to_dollars`, that divides a number by 100, and then apply it to a field in your JSON?",
+    "narrative": "Modularize complex logic.",
+    "hint": "Define `def to_dollars: . / 100;`.",
+    "input": "{\n  \"amount\": 2599\n}",
+    "query": "def to_dollars: . / 100; {amount: (.amount | to_dollars)}"
+  },
+  {
+    "title": "Joining Two Data Sources",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you enrich a log file containing user IDs by joining it with a second JSON file (a user lookup table) to add the corresponding user name to each log entry?",
+    "narrative": "Load a secondary JSON file as a variable to perform joins.",
+    "hint": "Requires CLI: `jq --slurpfile users users.json`.",
+    "input": "{\n  \"$users_file\": [\n    {\n      \"id\": 1,\n      \"name\": \"Alice\"\n    },\n    {\n      \"id\": 2,\n      \"name\": \"Bob\"\n    }\n  ],\n  \"logs\": [\n    {\n      \"user_id\": 1,\n      \"action\": \"login\"\n    },\n    {\n      \"user_id\": 2,\n      \"action\": \"logout\"\n    }\n  ]\n}",
+    "query": "($users_file | map({(.id|tostring): .name}) | add) as $lookup | .logs[] | . + {user_name: $lookup[(.user_id|tostring)]}"
+  },
+  {
+    "title": "Using Comments",
+    "category": " Advanced Concepts & CLI",
+    "description": "Problem: How would you add comments to a jq script to explain the purpose of different parts of the filter?",
+    "narrative": "Anything from a `#` to the end of the line is ignored by jq.",
+    "hint": "Add a comment before the `select`.",
+    "input": "[\n  {\n    \"level\": \"INFO\",\n    \"msg\": \"Service started\",\n    \"ts\": 1610000000,\n    \"context\": {\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Database connection failed\",\n    \"ts\": 1610000050,\n    \"context\": {\n      \"db\": \"users\",\n      \"region\": \"us-east-1\"\n    }\n  },\n  {\n    \"level\": \"WARN\",\n    \"msg\": \"High latency detected\",\n    \"ts\": 1610000060,\n    \"context\": {\n      \"latency_ms\": 500,\n      \"region\": \"us-west-2\"\n    }\n  },\n  {\n    \"level\": \"ERROR\",\n    \"msg\": \"Timeout waiting for upstream\",\n    \"ts\": 1610000100,\n    \"context\": {\n      \"service\": \"auth\",\n      \"region\": \"us-east-1\"\n    }\n  }\n]",
+    "query": ".[] # Iterate over all log entries\n| select(.level == \"ERROR\") # Find only the errors"
+  },
+  {
+    "title": "Word Count",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you take a sentence, split it into words, and produce a summary of how many times each word appears?",
+    "narrative": "Split text, group by word, and count.",
+    "hint": "Split by space, group_by `.`, map count.",
+    "input": "{\n  \"text\": \"hello world hello\"\n}",
+    "query": ".text | split(\" \") | group_by(.) | map({word: .[0], count: length})"
+  },
+  {
+    "title": "FizzBuzz",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you generate numbers from 1 to 15, replacing multiples of 3 with 'Fizz', multiples of 5 with 'Buzz', and multiples of both with 'FizzBuzz'?",
+    "narrative": "Showcases `range`, modulo `%`, and `if/elif`.",
+    "hint": "Generate range, then check modulo 15, 3, 5.",
+    "input": "null",
+    "query": "[range(1; 16) | if . % 15 == 0 then \"FizzBuzz\" elif . % 3 == 0 then \"Fizz\" elif . % 5 == 0 then \"Buzz\" else . end]"
+  },
+  {
+    "title": "Fibonacci Sequence",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you generate the first 10 numbers of the Fibonacci sequence?",
+    "narrative": "Demonstrates generating sequences recursively.",
+    "hint": "Use `recurse` on a pair `[0,1]`.",
+    "input": "{\n  \"n\": 10\n}",
+    "query": "[0,1] | recurse( (.[0] + .[1]) as $sum | [.[1], $sum] ) | .[0] | limit(10; .)"
+  },
+  {
+    "title": "ASCII Bar Chart",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you transform an array of labeled data points into a simple text-based bar chart using the '=' character for visualization?",
+    "narrative": "Multiplying a string repeats it.",
+    "hint": "Output `\"=\" * .value`.",
+    "input": "[\n  {\n    \"label\": \"A\",\n    \"value\": 5\n  },\n  {\n    \"label\": \"B\",\n    \"value\": 10\n  },\n  {\n    \"label\": \"C\",\n    \"value\": 7\n  }\n]",
+    "query": ".[] | \"\\(.label) | \\(\"=\" * .value)\""
+  },
+  {
+    "title": "Array Permutations",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you generate all possible orderings (permutations) of the elements in a given array?",
+    "narrative": "A recursive jq function can generate all permutations.",
+    "hint": "This requires a recursive function definition.",
+    "input": "[\n  1,\n  2,\n  3\n]",
+    "query": "def permutations: if length == 0 then [[]] else . as $in | reduce .[] as $x ([]; . + ($in - [$x] | permutations | map([$x] + .))) end; permutations"
+  },
+  {
+    "title": "Pascal's Triangle",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you algorithmically generate the first 5 rows of Pascal's Triangle?",
+    "narrative": "Another algorithmic example showing how `recurse` can be used to build up a structure row by row.",
+    "hint": "The next row is generated by adding pairs of numbers from the current row.",
+    "input": "{\n  \"n\": 5\n}",
+    "query": "def next_row: [0] + . as $row | . + [0] | [range(length + 1) | $row[.] + .[.]]; [1] | recurse(next_row) | limit(5; .)"
+  },
+  {
+    "title": "Transposing a Matrix",
+    "category": " Algorithms & Fun",
+    "description": "Problem: How would you transpose a matrix represented as an array of arrays (swapping its rows and columns)?",
+    "narrative": "Showcases complex data manipulation using `range` and indexing.",
+    "hint": "Requires `range`, `map`, and indexing.",
+    "input": "[\n  [\n    1,\n    2,\n    3\n  ],\n  [\n    4,\n    5,\n    6\n  ]\n]",
+    "query": "if . == [] then [] else . as $in | (map(length) | max) as $max | range($max) | map(range($in | length) | $in[.] | .[.]) end"
+  },
+  {
+    "title": "OpenAPI: Count Definitions",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: I want to know how complex the data model is. How many objects are defined in the 'definitions' section?",
+    "narrative": "The `length` function is polymorphic. When applied to an object, it counts the keys. This is the quickest way to get a high-level metric of API complexity.",
+    "hint": "Navigate to .definitions and apply length.",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".definitions | length"
+  },
+  {
+    "title": "OpenAPI: List All Paths",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: Generate a simple text list of all URL paths available in this API.",
+    "narrative": "The `.paths` node is an Object where the keys are the URLs. We use `keys` to extract them as an array, then `.[]` to flatten them into a stream of strings.",
+    "hint": "Use .paths | keys",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | keys[]"
+  },
+  {
+    "title": "OpenAPI: Extract Unique Tags",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: I want to see a unique list of all 'tags' (categories) used across all endpoints to understand the business domains.",
+    "narrative": "This requires digging deep. We iterate into `.paths`, then into the methods, then grab the `.tags` array. Because tags are arrays themselves, we get a list of lists. We must `flatten` it and then use `unique` to remove duplicates.",
+    "hint": "Path: .paths[][].tags | unique",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": "[.paths[][].tags] | flatten | unique"
+  },
+  {
+    "title": "OpenAPI: Find Deprecated Endpoints",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: We are auditing the API. Find which specific operations (Method + Path) are marked as 'deprecated'.",
+    "narrative": "We use `to_entries` to turn the paths object into a list we can iterate over. Then we filter (`select`) based on the boolean flag inside the method object.",
+    "hint": "Use select(.value[].deprecated == true)",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | to_entries[] | select(.value[].deprecated == true) | .key"
+  },
+  {
+    "title": "OpenAPI: Prefix All Paths (Migration)",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: We are moving to a new gateway and need to prepend '/v1' to every path key in the JSON.",
+    "narrative": "This is the perfect use case for `with_entries`. It allows us to pick up the Key/Value pair, modify the Key string (concatenation), and put it back down. `jq` handles rebuilding the object automatically.",
+    "hint": "Use with_entries(.key |= \"/v1\" + .)",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | with_entries(.key |= \"/v1\" + .)"
+  },
+  {
+    "title": "OpenAPI: Audit Missing Descriptions",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: QA Check - Identify any endpoint (Method + URL) that is missing a 'description' field.",
+    "narrative": "This combines variable capture with filtering. We store the path name in `$path`, dive into the method, and check if `.description` is null (or missing). We then format the output to tell us exactly where the documentation gap is.",
+    "hint": "Capture .key as $path, then select(not .description)",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | to_entries[] | .key as $path | .value | to_entries[] | select(.value.description == null) | \"MISSING DOCS: \" + .key + \" \" + ($path)"
+  },
+  {
+    "title": "OpenAPI: Stats by HTTP Method",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: Count how many GETs, POSTs, and DELETEs exist in total across the API.",
+    "narrative": "This is a Map-Reduce operation. 1. Extract all method keys. 2. `group_by` the method name. 3. `map` the resulting groups to an object showing the name and the `length` (count) of the group.",
+    "hint": "Extract keys, group_by(.), then map count.",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"Payment API\",\n    \"version\": \"1.0\"\n  },\n  \"paths\": {\n    \"/payments\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\",\n          \"Public\"\n        ],\n        \"summary\": \"List payments\",\n        \"description\": \"Get all payments.\"\n      },\n      \"post\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Create payment\",\n        \"parameters\": [\n          {\n            \"name\": \"amount\",\n            \"in\": \"body\",\n            \"required\": true\n          }\n        ]\n      }\n    },\n    \"/payments/{id}\": {\n      \"get\": {\n        \"tags\": [\n          \"Transactions\"\n        ],\n        \"summary\": \"Get payment details\",\n        \"description\": \"Get a single payment.\"\n      },\n      \"delete\": {\n        \"tags\": [\n          \"Admin\"\n        ],\n        \"summary\": \"Remove payment\",\n        \"deprecated\": true,\n        \"description\": \"Hard delete a payment.\"\n      }\n    },\n    \"/refunds\": {\n      \"post\": {\n        \"tags\": [\n          \"Admin\",\n          \"Refunds\"\n        ],\n        \"summary\": \"Issue refund\",\n        \"description\": \"Refund a transaction.\"\n      }\n    }\n  },\n  \"definitions\": {\n    \"Payment\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Error\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"code\": {\n          \"type\": \"integer\"\n        }\n      }\n    }\n  }\n}",
+    "query": "[.paths[] | keys[]] | group_by(.) | map({method: .[0], count: length})"
+  },
+  {
+    "title": "OpenAPI: Reduce for LLM Context",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: This OpenAPI spec is too large for my LLM's context window. How can I strip out the verbose 'definitions' and 'responses' to save tokens, keeping only the paths?",
+    "narrative": "When feeding code to LLMs, token economy is key. 'definitions' (schemas) and 'responses' often take up 60% of the file but aren't always needed for an agent to simply know *how* to call an endpoint. The `del()` function is the cleanest way to chop off branches of the JSON tree.",
+    "hint": "Use the pipe | to chain multiple del() commands.",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"DevOps Tooling API\",\n    \"version\": \"1.0.0\"\n  },\n  \"paths\": {\n    \"/git/commits\": {\n      \"get\": {\n        \"summary\": \"List commits\",\n        \"description\": \"Returns a list of recent git commits.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/Commit\"\n            }\n          }\n        }\n      }\n    },\n    \"/git/branches\": {\n      \"post\": {\n        \"summary\": \"Create branch\",\n        \"description\": \"Creates a new git branch from HEAD.\",\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Created\"\n          }\n        }\n      }\n    },\n    \"/users/{id}\": {\n      \"get\": {\n        \"summary\": \"Get User\",\n        \"description\": \"Fetches user profile by ID.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/User\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"definitions\": {\n    \"User\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"integer\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Commit\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"hash\": {\n          \"type\": \"string\"\n        },\n        \"message\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}",
+    "query": "del(.definitions) | del(.paths[][].responses)"
+  },
+  {
+    "title": "OpenAPI: Find Specific Endpoints",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: I only care about endpoints related to 'git'. How can I filter the paths object to show only keys containing that string?",
+    "narrative": "This is a classic 'Dictionary Filter'. Because `.paths` is an Object (not an Array), we can't just run `select`. We must use `with_entries` to expose the Key and Value, run our logic on the `.key`, and then `jq` automatically rebuilds the object for us.",
+    "hint": "Use with_entries(select(.key | contains(...)))",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"DevOps Tooling API\",\n    \"version\": \"1.0.0\"\n  },\n  \"paths\": {\n    \"/git/commits\": {\n      \"get\": {\n        \"summary\": \"List commits\",\n        \"description\": \"Returns a list of recent git commits.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/Commit\"\n            }\n          }\n        }\n      }\n    },\n    \"/git/branches\": {\n      \"post\": {\n        \"summary\": \"Create branch\",\n        \"description\": \"Creates a new git branch from HEAD.\",\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Created\"\n          }\n        }\n      }\n    },\n    \"/users/{id}\": {\n      \"get\": {\n        \"summary\": \"Get User\",\n        \"description\": \"Fetches user profile by ID.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/User\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"definitions\": {\n    \"User\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"integer\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Commit\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"hash\": {\n          \"type\": \"string\"\n        },\n        \"message\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | with_entries(select(.key | contains(\"git\")))"
+  },
+  {
+    "title": "OpenAPI: Map Endpoints to Methods",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: I need a flat list of every URL and Method (GET/POST) to give my agent a 'Table of Contents' of this API.",
+    "narrative": "This requires deep iteration. We must loop through the paths, capture the URL (the key) as a variable `$path`, then dive deeper to find the method names. Finally, we construct a string using string interpolation.",
+    "hint": "Use .key as $path to save the URL before diving deeper.",
+    "input": "{\n  \"swagger\": \"2.0\",\n  \"info\": {\n    \"title\": \"DevOps Tooling API\",\n    \"version\": \"1.0.0\"\n  },\n  \"paths\": {\n    \"/git/commits\": {\n      \"get\": {\n        \"summary\": \"List commits\",\n        \"description\": \"Returns a list of recent git commits.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/Commit\"\n            }\n          }\n        }\n      }\n    },\n    \"/git/branches\": {\n      \"post\": {\n        \"summary\": \"Create branch\",\n        \"description\": \"Creates a new git branch from HEAD.\",\n        \"responses\": {\n          \"201\": {\n            \"description\": \"Created\"\n          }\n        }\n      }\n    },\n    \"/users/{id}\": {\n      \"get\": {\n        \"summary\": \"Get User\",\n        \"description\": \"Fetches user profile by ID.\",\n        \"responses\": {\n          \"200\": {\n            \"description\": \"Success\",\n            \"schema\": {\n              \"$ref\": \"#/definitions/User\"\n            }\n          }\n        }\n      }\n    }\n  },\n  \"definitions\": {\n    \"User\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"id\": {\n          \"type\": \"integer\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        }\n      }\n    },\n    \"Commit\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"hash\": {\n          \"type\": \"string\"\n        },\n        \"message\": {\n          \"type\": \"string\"\n        }\n      }\n    }\n  }\n}",
+    "query": ".paths | to_entries[] | .key as $path | .value | to_entries[] | \"[(.key)] ($path)\""
+  },
+  {
+    "title": "Schema Discovery: Root Data Types",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: I have an unknown JSON document. I want to inspect the root keys and identify the data type of each value (e.g., is it a number, a null, or a nested object?).",
+    "narrative": "When exploring new data, visual inspection isn't enough. The built-in `type` function definitively tells you if a value is a `string`, `number`, `boolean`, `null`, `array`, or `object`. By combining this with `to_entries`, we can generate a clean 'Field Name' vs 'Data Type' report.",
+    "hint": "Pipe the value into the type function: (.value | type)",
+    "input": "{\n  \"api_version\": \"v1.0\",\n  \"retry_count\": 3,\n  \"is_active\": true,\n  \"deprecated_at\": null,\n  \"features\": [\n    \"logging\",\n    \"auth\"\n  ],\n  \"meta\": {\n    \"region\": \"us-east-1\",\n    \"shard\": \"A\"\n  }\n}",
+    "query": "to_entries | map({ key: .key, value: (.value | type) }) | from_entries"
+  },
+  {
+    "title": "dbt: Filter Models by Package Allowlist",
+    "category": "Filtering & Logic",
+    "description": "Problem: I have a massive manifest, but I only care about models from specific packages (e.g., 'finance' and 'core'). Filter the nodes to return only those models.",
+    "narrative": "We use your `$ALLOW_LIST` technique here. Because `.nodes` is an object, we pipe it to `.[]` to turn it into a stream of objects before selecting. This mimics SQL's `WHERE package_name IN (...)`.",
+    "hint": "Define $PKG_LIST inside the query, then select(.package_name | IN($PKG_LIST[])).",
+    "input": "{\n  \"metadata\": {\n    \"dbt_version\": \"1.5.0\"\n  },\n  \"nodes\": {\n    \"model.finance.stg_payments\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"stg_payments\",\n      \"description\": \"Staged payment data\",\n      \"config\": {\n        \"materialized\": \"view\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"pii\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"source.finance.stripe.charges\"\n        ]\n      },\n      \"columns\": {\n        \"amount\": {\n          \"name\": \"amount\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.finance.fct_revenue\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"fct_revenue\",\n      \"description\": \"Daily revenue aggregation\",\n      \"config\": {\n        \"materialized\": \"incremental\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"finance_dashboard\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"model.finance.stg_payments\"\n        ]\n      },\n      \"columns\": {\n        \"total_rev\": {\n          \"name\": \"total_rev\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.marketing.dim_customers\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"marketing\",\n      \"name\": \"dim_customers\",\n      \"description\": null,\n      \"config\": {\n        \"materialized\": \"table\"\n      },\n      \"tags\": [\n        \"nightly\"\n      ],\n      \"depends_on\": {\n        \"nodes\": []\n      },\n      \"columns\": {}\n    },\n    \"test.finance.unique_id\": {\n      \"resource_type\": \"test\",\n      \"package_name\": \"finance\",\n      \"name\": \"unique_id_stg_payments\",\n      \"tags\": []\n    }\n  }\n}",
+    "query": "[\"finance\", \"core\"] as $PKG_LIST | [.nodes[] | select(.resource_type == \"model\") | select(.package_name | IN($PKG_LIST[])) | .name]"
+  },
+  {
+    "title": "dbt: Find Incremental Models",
+    "category": "Filtering & Logic",
+    "description": "Problem: Optimization Check - List all models that are configured with the 'incremental' materialization strategy.",
+    "narrative": "dbt configurations are nested deep inside the `.config` object. We filter for `resource_type == 'model'` first (to ignore tests/seeds), then check the materialization key.",
+    "hint": "Path: .config.materialized",
+    "input": "{\n  \"metadata\": {\n    \"dbt_version\": \"1.5.0\"\n  },\n  \"nodes\": {\n    \"model.finance.stg_payments\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"stg_payments\",\n      \"description\": \"Staged payment data\",\n      \"config\": {\n        \"materialized\": \"view\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"pii\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"source.finance.stripe.charges\"\n        ]\n      },\n      \"columns\": {\n        \"amount\": {\n          \"name\": \"amount\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.finance.fct_revenue\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"fct_revenue\",\n      \"description\": \"Daily revenue aggregation\",\n      \"config\": {\n        \"materialized\": \"incremental\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"finance_dashboard\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"model.finance.stg_payments\"\n        ]\n      },\n      \"columns\": {\n        \"total_rev\": {\n          \"name\": \"total_rev\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.marketing.dim_customers\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"marketing\",\n      \"name\": \"dim_customers\",\n      \"description\": null,\n      \"config\": {\n        \"materialized\": \"table\"\n      },\n      \"tags\": [\n        \"nightly\"\n      ],\n      \"depends_on\": {\n        \"nodes\": []\n      },\n      \"columns\": {}\n    },\n    \"test.finance.unique_id\": {\n      \"resource_type\": \"test\",\n      \"package_name\": \"finance\",\n      \"name\": \"unique_id_stg_payments\",\n      \"tags\": []\n    }\n  }\n}",
+    "query": "[.nodes[] | select(.resource_type == \"model\" and .config.materialized == \"incremental\") | .name]"
+  },
+  {
+    "title": "dbt: Models by Tag",
+    "category": "Arrays & Iteration",
+    "description": "Problem: Find all models tagged with 'pii' (Personally Identifiable Information) for a security audit.",
+    "narrative": "Tags in dbt are arrays of strings. To check if a specific string exists in that array, we can use the `index` function (which returns a number if found) or `contains`. `index` is usually safer for exact matches.",
+    "hint": "select(.tags | index(\"pii\"))",
+    "input": "{\n  \"metadata\": {\n    \"dbt_version\": \"1.5.0\"\n  },\n  \"nodes\": {\n    \"model.finance.stg_payments\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"stg_payments\",\n      \"description\": \"Staged payment data\",\n      \"config\": {\n        \"materialized\": \"view\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"pii\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"source.finance.stripe.charges\"\n        ]\n      },\n      \"columns\": {\n        \"amount\": {\n          \"name\": \"amount\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.finance.fct_revenue\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"fct_revenue\",\n      \"description\": \"Daily revenue aggregation\",\n      \"config\": {\n        \"materialized\": \"incremental\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"finance_dashboard\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"model.finance.stg_payments\"\n        ]\n      },\n      \"columns\": {\n        \"total_rev\": {\n          \"name\": \"total_rev\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.marketing.dim_customers\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"marketing\",\n      \"name\": \"dim_customers\",\n      \"description\": null,\n      \"config\": {\n        \"materialized\": \"table\"\n      },\n      \"tags\": [\n        \"nightly\"\n      ],\n      \"depends_on\": {\n        \"nodes\": []\n      },\n      \"columns\": {}\n    },\n    \"test.finance.unique_id\": {\n      \"resource_type\": \"test\",\n      \"package_name\": \"finance\",\n      \"name\": \"unique_id_stg_payments\",\n      \"tags\": []\n    }\n  }\n}",
+    "query": "[.nodes[] | select(.tags | index(\"pii\")) | .name]"
+  },
+  {
+    "title": "dbt: Find Undocumented Models",
+    "category": "Scenario: APIs & Data",
+    "description": "Problem: CI/CD Gate - Identify any model that has a null or empty description field.",
+    "narrative": "Documentation is crucial. We filter for models where the description is either `null` OR an empty string (length == 0). This output can be fed into a CI pipeline to fail a build.",
+    "hint": "select(.description == null)",
+    "input": "{\n  \"metadata\": {\n    \"dbt_version\": \"1.5.0\"\n  },\n  \"nodes\": {\n    \"model.finance.stg_payments\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"stg_payments\",\n      \"description\": \"Staged payment data\",\n      \"config\": {\n        \"materialized\": \"view\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"pii\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"source.finance.stripe.charges\"\n        ]\n      },\n      \"columns\": {\n        \"amount\": {\n          \"name\": \"amount\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.finance.fct_revenue\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"fct_revenue\",\n      \"description\": \"Daily revenue aggregation\",\n      \"config\": {\n        \"materialized\": \"incremental\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"finance_dashboard\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"model.finance.stg_payments\"\n        ]\n      },\n      \"columns\": {\n        \"total_rev\": {\n          \"name\": \"total_rev\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.marketing.dim_customers\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"marketing\",\n      \"name\": \"dim_customers\",\n      \"description\": null,\n      \"config\": {\n        \"materialized\": \"table\"\n      },\n      \"tags\": [\n        \"nightly\"\n      ],\n      \"depends_on\": {\n        \"nodes\": []\n      },\n      \"columns\": {}\n    },\n    \"test.finance.unique_id\": {\n      \"resource_type\": \"test\",\n      \"package_name\": \"finance\",\n      \"name\": \"unique_id_stg_payments\",\n      \"tags\": []\n    }\n  }\n}",
+    "query": ".nodes[] | select(.resource_type == \"model\") | select(.description == null or .description == \"\") | { name: .name, package: .package_name }"
+  },
+  {
+    "title": "dbt: Find Downstream Dependencies",
+    "category": "Advanced Concepts & CLI",
+    "description": "Problem: I am changing the 'stg_payments' model. I need to find which other models depend on it to warn those teams.",
+    "narrative": "This is a reverse-search. We look inside the `.depends_on.nodes` array of *every* node to see if our target model is listed there. Note that we search for the full unique ID (`model.finance.stg_payments`).",
+    "hint": "select(.depends_on.nodes[] | contains(\"stg_payments\"))",
+    "input": "{\n  \"metadata\": {\n    \"dbt_version\": \"1.5.0\"\n  },\n  \"nodes\": {\n    \"model.finance.stg_payments\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"stg_payments\",\n      \"description\": \"Staged payment data\",\n      \"config\": {\n        \"materialized\": \"view\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"pii\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"source.finance.stripe.charges\"\n        ]\n      },\n      \"columns\": {\n        \"amount\": {\n          \"name\": \"amount\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.finance.fct_revenue\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"finance\",\n      \"name\": \"fct_revenue\",\n      \"description\": \"Daily revenue aggregation\",\n      \"config\": {\n        \"materialized\": \"incremental\"\n      },\n      \"tags\": [\n        \"daily\",\n        \"finance_dashboard\"\n      ],\n      \"depends_on\": {\n        \"nodes\": [\n          \"model.finance.stg_payments\"\n        ]\n      },\n      \"columns\": {\n        \"total_rev\": {\n          \"name\": \"total_rev\",\n          \"type\": \"numeric\"\n        }\n      }\n    },\n    \"model.marketing.dim_customers\": {\n      \"resource_type\": \"model\",\n      \"package_name\": \"marketing\",\n      \"name\": \"dim_customers\",\n      \"description\": null,\n      \"config\": {\n        \"materialized\": \"table\"\n      },\n      \"tags\": [\n        \"nightly\"\n      ],\n      \"depends_on\": {\n        \"nodes\": []\n      },\n      \"columns\": {}\n    },\n    \"test.finance.unique_id\": {\n      \"resource_type\": \"test\",\n      \"package_name\": \"finance\",\n      \"name\": \"unique_id_stg_payments\",\n      \"tags\": []\n    }\n  }\n}",
+    "query": "[.nodes[] | select(.depends_on.nodes[]? | contains(\"model.finance.stg_payments\")) | .name]"
+  },
+  {
+    "title": "Meta: List Unique Categories",
+    "category": "Aggregation & Summary",
+    "description": "Problem: My categories are messy. How do I get a simple, deduplicated list of all category names currently in use?",
+    "narrative": "We extract the `.category` field from every item using `map`, and then pipe that list to `unique`. This sorts them and removes duplicates, instantly revealing typos (like ' Basics' vs 'Basics').",
+    "hint": "map(.category) | unique",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(.category) | unique"
+  },
+  {
+    "title": "Meta: Search by Keyword",
+    "category": "Filtering & Logic",
+    "description": "Problem: I need to find all questions that mention 'admin' in their description.",
+    "narrative": "This is a standard search filter. We iterate through the array using `map` + `select`. Inside the select, we check if the description field `contains` our target string.",
+    "hint": "map(select(.description | contains(\"admin\")))",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(select(.description | contains(\"admin\")))"
+  },
+  {
+    "title": "Meta: Count Questions by Category",
+    "category": "Aggregation & Summary",
+    "description": "Problem: How many questions do I have in each category?",
+    "narrative": "This is the most common aggregation pattern. 1. `group_by` the field. 2. `map` the groups to a new object containing the name (from the first item `.[0]`) and the count (`length`).",
+    "hint": "group_by(.category) | map({cat: .[0].category, count: length})",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "group_by(.category) | map({category: .[0].category, count: length})"
+  },
+  {
+    "title": "Meta: Find Incomplete Questions",
+    "category": "Filtering & Logic",
+    "description": "Problem: QA Check - Find any question that is missing a 'hint' (i.e., the hint is null or an empty string).",
+    "narrative": "We use boolean logic inside `select`. We want items where `.hint` is null OR where its length is 0. This helps maintain the quality of your learning app.",
+    "hint": "select(.hint == null or .hint == \"\")",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(select(.hint == null or .hint == \"\"))"
+  },
+  {
+    "title": "Meta: Trim Category Whitespace",
+    "category": "Data Transformation",
+    "description": "Problem: Some categories have leading spaces (e.g., ' Basics'). I need to clean this up across the entire file.",
+    "narrative": "We use the Update Operator `|=` to modify the `.category` field in place. `ltrimstr(\" \")` removes the leading space. This ensures ' Basics' becomes 'Basics' so they group correctly.",
+    "hint": "map(.category |= ltrimstr(\" \"))",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(.category |= ltrimstr(\" \"))"
+  },
+  {
+    "title": "Meta: Validate Query Syntax",
+    "category": "Filtering & Logic",
+    "description": "Problem: Sanity Check - Ensure no question has a query that is accidentally empty.",
+    "narrative": "A missing query breaks the app. We verify that the `query` field exists and has content. We can also check if the `input` field is a string.",
+    "hint": "select(.query | length > 0)",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(select(.query == null or (.query | length) == 0))"
+  },
+  {
+    "title": "Meta: Generate Markdown Checklist",
+    "category": "Data Transformation",
+    "description": "Problem: I want to copy-paste a To-Do list of all question titles into a GitHub issue.",
+    "narrative": "We are transforming objects into strings. We use string interpolation `\"(...)\"` to insert the title into a Markdown checklist format `- [ ] Title`.",
+    "hint": "map(\"- [ ] \\(.title)\")",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(\"- [ ] \\(.title)\") | .[]"
+  },
+  {
+    "title": "Meta: Export Minimal Dataset",
+    "category": "Object Manipulation",
+    "description": "Problem: I need a lightweight version of the file for the mobile app. Remove the 'narrative' and 'input' fields to save space.",
+    "narrative": "We can construct a new object `{}` for every item, explicitly selecting only the fields we want to keep. This is often safer than `del()` when you want a strict schema output.",
+    "hint": "map({ title: .title, query: .query })",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map({ title: .title, category: .category, query: .query })"
+  },
+  {
+    "title": "Meta: Auto-Tag Complexity",
+    "category": "Filtering & Logic",
+    "description": "Problem: I want to automatically label questions as 'Advanced' if their query string is longer than 20 characters.",
+    "narrative": "We can add a new field to every object using `+`. We use an `if-then-else` statement to determine the value of this new field based on the length of the query.",
+    "hint": "map(. + { complexity: (if ... then ... else ... end) })",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(. + { complexity: (if (.query | length) > 20 then \"Advanced\" else \"Basic\" end) })"
+  },
+  {
+    "title": "Meta: Verify JSON Structure",
+    "category": "Basics: Navigation & Extraction",
+    "description": "Problem: Ensure that every item in the array is actually an object (and not a random string or number that got pasted in).",
+    "narrative": "The `type` function is your best friend for validation. We iterate through the array and select any item where the type is NOT 'object'. If this returns anything, your data is corrupt.",
+    "hint": "map(select(type != \"object\"))",
+    "input": "[\n  {\n    \"title\": \"Basic Select\",\n    \"category\": \" Basics: Navigation\",\n    \"description\": \"Select the user name.\",\n    \"narrative\": \"Use dot notation.\",\n    \"hint\": \"\",\n    \"input\": \"{\\\"name\\\": \\\"Gui\\\"}\",\n    \"query\": \".name\"\n  },\n  {\n    \"title\": \"Complex Filter\",\n    \"category\": \"Filtering & Logic\",\n    \"description\": \"Select users with admin role and active status.\",\n    \"narrative\": \"Combine conditions with 'and'.\",\n    \"hint\": \"select(.role=='admin' and .active)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(select(.role==\\\"admin\\\" and .active==true))\"\n  },\n  {\n    \"title\": \"Map IDs\",\n    \"category\": \"Basics: Navigation\",\n    \"description\": \"Get all IDs.\",\n    \"narrative\": \"Map over the array.\",\n    \"hint\": \"map(.id)\",\n    \"input\": \"[...]\",\n    \"query\": \"map(.id)\"\n  }\n]",
+    "query": "map(select(type != \"object\"))"
+  }
+]

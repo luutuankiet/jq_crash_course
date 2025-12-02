@@ -199,3 +199,151 @@ export const BQ_JSON_EXPORT = [
     "custom_attributes": "[{\"key\":\"tier\", \"value\":\"silver\"}]"
   }
 ];
+
+
+
+// OPENAPI 
+
+export const OPENAPI_FULL_SAMPLE = {
+  "swagger": "2.0",
+  "info": { "title": "Payment API", "version": "1.0" },
+  "paths": {
+    "/payments": {
+      "get": {
+        "tags": ["Transactions", "Public"],
+        "summary": "List payments",
+        "description": "Get all payments."
+      },
+      "post": {
+        "tags": ["Transactions"],
+        "summary": "Create payment",
+        // Description is missing here intentionally for testing!
+        "parameters": [
+          { "name": "amount", "in": "body", "required": true }
+        ]
+      }
+    },
+    "/payments/{id}": {
+      "get": {
+        "tags": ["Transactions"],
+        "summary": "Get payment details",
+        "description": "Get a single payment."
+      },
+      "delete": {
+        "tags": ["Admin"],
+        "summary": "Remove payment",
+        "deprecated": true,
+        "description": "Hard delete a payment."
+      }
+    },
+    "/refunds": {
+      "post": {
+        "tags": ["Admin", "Refunds"],
+        "summary": "Issue refund",
+        "description": "Refund a transaction."
+      }
+    }
+  },
+  "definitions": {
+    "Payment": { "type": "object", "properties": { "id": { "type": "string" } } },
+    "Error": { "type": "object", "properties": { "code": { "type": "integer" } } }
+  }
+};
+export const OPENAPI_SAMPLE = {
+  "swagger": "2.0",
+  "info": {
+    "title": "DevOps Tooling API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/git/commits": {
+      "get": {
+        "summary": "List commits",
+        "description": "Returns a list of recent git commits.",
+        "responses": {
+          "200": { "description": "Success", "schema": { "$ref": "#/definitions/Commit" } }
+        }
+      }
+    },
+    "/git/branches": {
+      "post": {
+        "summary": "Create branch",
+        "description": "Creates a new git branch from HEAD.",
+        "responses": {
+          "201": { "description": "Created" }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "summary": "Get User",
+        "description": "Fetches user profile by ID.",
+        "responses": {
+          "200": { "description": "Success", "schema": { "$ref": "#/definitions/User" } }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" }
+      }
+    },
+    "Commit": {
+      "type": "object",
+      "properties": {
+        "hash": { "type": "string" },
+        "message": { "type": "string" }
+      }
+    }
+  }
+};
+
+export const DBT_MANIFEST_SAMPLE = {
+  "metadata": { "dbt_version": "1.5.0" },
+  "nodes": {
+    "model.finance.stg_payments": {
+      "resource_type": "model",
+      "package_name": "finance",
+      "name": "stg_payments",
+      "description": "Staged payment data",
+      "config": { "materialized": "view" },
+      "tags": ["daily", "pii"],
+      "depends_on": { "nodes": ["source.finance.stripe.charges"] },
+      "columns": {
+        "amount": { "name": "amount", "type": "numeric" }
+      }
+    },
+    "model.finance.fct_revenue": {
+      "resource_type": "model",
+      "package_name": "finance",
+      "name": "fct_revenue",
+      "description": "Daily revenue aggregation",
+      "config": { "materialized": "incremental" },
+      "tags": ["daily", "finance_dashboard"],
+      "depends_on": { "nodes": ["model.finance.stg_payments"] },
+      "columns": {
+        "total_rev": { "name": "total_rev", "type": "numeric" }
+      }
+    },
+    "model.marketing.dim_customers": {
+      "resource_type": "model",
+      "package_name": "marketing",
+      "name": "dim_customers",
+      "description": null, // MISSING DOCS
+      "config": { "materialized": "table" },
+      "tags": ["nightly"],
+      "depends_on": { "nodes": [] },
+      "columns": {}
+    },
+    "test.finance.unique_id": {
+      "resource_type": "test",
+      "package_name": "finance",
+      "name": "unique_id_stg_payments",
+      "tags": []
+    }
+  }
+};

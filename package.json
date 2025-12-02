@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "tsx services/testRunner.ts"
+    "test": "tsx services/testRunner.ts",
+    "dump": "tsx scripts/dump-recipes.ts"
   },
   "dependencies": {
     "@tailwindcss/typography": "^0.5.19",
